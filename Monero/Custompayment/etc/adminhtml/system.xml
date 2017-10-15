@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+                <group id="custompayment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Monero Payment</label>
+                    <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="xmr_address" translate="xmr_address" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Monero address</label>
+                    </field>
+                    <field id="daemon_address" translate="daemon_address" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-rpc address</label>
+                    </field>
+                    <field id="rpc_port" translate="rpc_port" type="number" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-rpc port</label>
+                    </field>
+                </group>
+        </section>
+    </system>
+</config>
