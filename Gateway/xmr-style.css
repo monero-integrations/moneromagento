@@ -88,7 +88,7 @@ span.xmr-payment-text-header {
     border-style: solid;
     border-width: 1px;
     border-color: #ccc;
-	    float: left;
+    float: left;
 }
 
 span.xmr-label {
@@ -108,7 +108,7 @@ span.xmr-label {
 
 .xmr-address-box {
     word-wrap: break-word;
-	    background-color: #fff;
+    background-color: #fff;
     padding: 8px;
     border-style: solid;
     border-width: 1px;
@@ -118,36 +118,37 @@ span.xmr-label {
 
 .xmr-qr-code-box img {
     width: 100%;
-    max-width: 100px;
+    max-width: 100%;
 }
 
 .xmr-qr-code-box {
-    width: fit-content;
+    width: 60%;
     padding: 8px;
     border-color: #ccc;
     border-style: solid;
     border-width: 1px;
-	background-color: #fff;
+    background-color: #fff;
+    margin-left: 10%;
 }
 
 
 .content-xmr-payment {
     padding: 8px;
-	    background-color: #f9f9f9;
-
+    background-color: #f9f9f9;
+    
 }
 
 
 .xmr-qr-code {
-      padding: 8px;
+    padding-left: 8%;
 }
 
 .xmr-address {
-        padding: 8px;
+    padding: 8px;
 }
 
 .xmr-amount-send {
-       padding: 8px;
+    padding: 8px;
 }
 
 .xmr-payment-text-header h2 {
@@ -159,56 +160,56 @@ span.xmr-label {
 
 /* desktop display */
 @media only screen and  (min-width: 700px) and (max-width: 4280px) {
-
-.page-container {
-
-    padding-left: 15%;
-    padding-right: 15%;
-
-}
-
-.xmr-qr-code {
-    width: 28%;
-}
-
-.xmr-address {
-    width: 28%;
-}
-
-.xmr-amount-send {
-    width: 28%;
-}
-.logo-xmr img {
-    margin-top: 6px;
-    margin-left: 32px;
-}
+    
+    .page-container {
+        
+        padding-left: 15%;
+        padding-right: 15%;
+        
+    }
+    
+    .xmr-qr-code {
+        width: 28%;
+    }
+    
+    .xmr-address {
+        width: 28%;
+    }
+    
+    .xmr-amount-send {
+        width: 28%;
+    }
+    .logo-xmr img {
+        margin-top: 6px;
+        margin-left: 32px;
+    }
 }
 /* mobile display */
 
 @media only screen and (min-width: 100px) and (max-width: 700px) {
-
-.logo-xmr img {
-    margin-top: 6px;
-    margin-left: 8px;
-}
-
-.page-container {
-
-    padding-left: 2%;
-    padding-right: 2%;
-
-}
-
-.xmr-qr-code {
-    width: 80%;
-}
-
-.xmr-address {
-    width: 80%;
-}
-
-.xmr-amount-send {
-    width: 100%;
-}
-
+    
+    .logo-xmr img {
+        margin-top: 6px;
+        margin-left: 8px;
+    }
+    
+    .page-container {
+        
+        padding-left: 2%;
+        padding-right: 2%;
+        
+    }
+    
+    .xmr-qr-code {
+        width: 80%;
+    }
+    
+    .xmr-address {
+        width: 80%;
+    }
+    
+    .xmr-amount-send {
+        width: 100%;
+    }
+    
 }
