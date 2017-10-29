@@ -85,31 +85,68 @@ $price = $daemon->changeto($total, $currency);
 $payment_id = $daemon->paymentid_cookie();
 $integrated_address = $daemon->integrated_address($payment_id);
 $status = $daemon->verify_payment($payment_id, $price);
+echo "
+<head>
+<!--Import Google Icon Font-->
+<link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+<link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
 
-echo "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>";
-echo "<div class='row'>
-    <div class='col-sm-12 col-md-12 col-lg-12'>
-    <div class='panel panel-default' id='PaymentBox_de3a227fb470475'>
-    <div class='panel-body'>
-    <div class='row'>
-    <div class='col-sm-12 col-md-12 col-lg-12'>
-    <h3> Monero Payment Box</h3>
-    </div>
-    <div class='col-sm-3 col-md-3 col-lg-3'>
-    <img src='https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=" . $uri . "' class='img-responsive'>
-    </div>
-    <div class='col-sm-9 col-md-9 col-lg-9' style='padding:10px;'>
-    <h4>$status</h4>
-    Send $price <b> XMR</b> to<br/><input type='text'  class='form-control' value='$integrated_address'>
-    or scan QR Code with your mobile device<br/><br/>
-    <small>If you need help with how to pay with Monero or want to learn more about it, please go to the Monero <a href='https://getmonero.org'>site</a>. </small>
-    </div>
-    <div class='col-sm-12 col-md-12 col-lg-12'>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-</div>";
+<link href='xmr-style.css' rel='stylesheet'>
+
+<!--Let browser know website is optimized for mobile-->
+<meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+</head>
+
+<body>
+<!-- page container  -->
+<div class='page-container'>
+
+
+<!-- monero container payment box -->
+<div class='container-xmr-payment'>
+
+
+<!-- header -->
+<div class='header-xmr-payment'>
+<span class='logo-xmr'><img src='img/logomonero.png' /></span>
+<span class='xmr-payment-text-header'><h2>MONERO PAYMENT</h2></span>
+</div>
+<!-- end header -->
+
+<!-- xmr content box -->
+<div class='content-xmr-payment'>
+
+<div class='xmr-amount-send'>
+<span class='xmr-label'>Send:</span>
+<div class='xmr-amount-box'>$price</div><div class='xmr-box'>XMR</div>
+</div>
+
+<div class='xmr-address'>
+<span class='xmr-label'>To this address:</span>
+<div class='xmr-address-box'>$integrated_address</div>
+</div>
+<div class='xmr-qr-code'>
+<span class='xmr-label'>Or scan QR:</span>
+<div class='xmr-qr-code-box'><img src='img/qr.png' /></div>
+</div>
+
+<div class='clear'></div>
+</div>
+
+<!-- end content box -->
+
+<!-- footer xmr payment -->
+<div class='footer-xmr-payment'>
+<a href='#'>Help</a> | <a href='#'>About Monero</a>
+</div>
+<!-- end footer xmr payment -->
+
+</div>
+<!-- end monero container payment box -->
+
+</div>
+<!-- end page container  -->
+</body>
+";
 
 echo "<script type='text/javascript'>setTimeout(function () { location.reload(true); }, 30000);</script>";
