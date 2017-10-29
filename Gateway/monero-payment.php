@@ -127,7 +127,7 @@ echo "
 </div>
 <div class='xmr-qr-code'>
 <span class='xmr-label'>Or scan QR:</span>
-<div class='xmr-qr-code-box'><img src='img/qr.png' /></div>
+<div class='xmr-qr-code-box'><img src='https://api.qrserver.com/v1/create-qr-code/? size=200x200&data=monero:$integrated_address' /></div>
 </div>
 
 <div class='clear'></div>
