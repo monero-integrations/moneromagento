@@ -1,0 +1,28 @@
+{
+    "name": "monerointegrations/custompayment",
+    "description": "Accept Monero",
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0"
+    },
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+                "BSD-3"
+                ],
+    "authors": [
+                {
+                "name": "Monero-Integrations",
+                "email": "support@monerointegrations.com",
+                "homepage": "http://monerointegrations.com",
+                "role": "Developer"
+                }
+                ],
+    "autoload": {
+        "files": [
+                  "registration.php"
+                  ],
+        "psr-4": {
+            "MoneroIntegrations\\Custompayment\\": ""
+        }
+    }
+}
