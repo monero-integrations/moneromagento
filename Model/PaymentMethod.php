@@ -1,6 +1,6 @@
 <?php
  
-namespace Monero\Custompayment\Model;
+namespace MoneroIntegrations\Custompayment\Model;
  
 /**
  * Pay In Store payment method model
