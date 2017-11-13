@@ -29,7 +29,7 @@ define(
                    defaults: {
                        template: 'MoneroIntegrations_Custompayment/payment/custompayment'
                              },
-                   afterPlaceOrder: function () {
+                   placeOrder: function () {
                        var total = document.getElementsByClassName('amount')[2].innerText; // TODO: use magento tools to get total instead
                        console.log(total);
                        var encodedData = window.btoa(total);
