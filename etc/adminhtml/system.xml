@@ -8,8 +8,11 @@
                         <label>Enable</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>
-                    <field id="xmr_address" translate="xmr_address" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Monero address</label>
+                    <field id="rpc_address" translate="xmr_address" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-RPC Address</label>
+                    </field>
+                    <field id="rpc_port" translate="rpc_port" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-RPC Port</label>
                     </field>
                 </group>
         </section>
