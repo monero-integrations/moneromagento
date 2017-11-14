@@ -375,8 +375,9 @@ class Monero
     
 class MoneroPayment extends \Magento\Framework\App\Action\Action
 {
-    public function __construct(\Magento\Framework\App\Action\Context $context)
+    public function __construct(\MoneroIntegrations\Custompayment\Helper\Data $helper, \Magento\Framework\App\Action\Context $context)
     {
+        $this->helper = $helper;
         parent::__construct($context);
     }
     public $monero;
