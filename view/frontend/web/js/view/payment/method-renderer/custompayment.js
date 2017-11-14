@@ -30,11 +30,7 @@ define(
                        template: 'MoneroIntegrations_Custompayment/payment/custompayment'
                              },
                    placeOrder: function () {
-                       var total = document.getElementsByClassName('amount')[2].innerText; // TODO: use magento tools to get total instead
-                       console.log(total);
-                       var encodedData = window.btoa(total);
-                       var gatewayPath = '/Gateway/monero-payment.php?xmr=';
-                       var redirectUrl = gatewayPath.concat(encodedData);
+                       var redirectUrl = 'moneropayment/Gateway/MoneroPayment';
                        console.log(redirectUrl);
                        window.location.replace(url.build(redirectUrl));
                        }
