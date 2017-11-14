@@ -1,71 +1,65 @@
 <?php
-/**
- * library.php
- *
- * Written using the JSON RPC specification -
- * http://json-rpc.org/wiki/specification
- *
- * @author Kacper Rowinski <krowinski@implix.com>
- * http://implix.com
- *
- * Modified by Serhack and cryptochangements to work with Monero wallet-rpc
- * https://getmonero.org
- */
+
+namespace MoneroIntegrations\Custompayment\Controller\Gateway;
+
+use Magento\Framework\App\Action\Context;
+
+// Monero_Library is just the contents of library.php. It's super messy but works for now
 class Monero_Library
 {
-    protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
-
+    protected $url = null, $is_debug = false, $parameters_structure = 'array';
+        
     protected $curl_options = array(
-        CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_TIMEOUT => 8
-    );
+                                    CURLOPT_CONNECTTIMEOUT => 8,
+                                    CURLOPT_TIMEOUT => 8
+                                    );
     
-    
+        
     private $httpErrors = array(
-        400 => '400 Bad Request',
-        401 => '401 Unauthorized',
-        403 => '403 Forbidden',
-        404 => '404 Not Found',
-        405 => '405 Method Not Allowed',
-        406 => '406 Not Acceptable',
-        408 => '408 Request Timeout',
-        500 => '500 Internal Server Error',
-        502 => '502 Bad Gateway',
-        503 => '503 Service Unavailable'
-    );
-   
+                                400 => '400 Bad Request',
+                                401 => '401 Unauthorized',
+                                403 => '403 Forbidden',
+                                404 => '404 Not Found',
+                                405 => '405 Method Not Allowed',
+                                406 => '406 Not Acceptable',
+                                408 => '408 Request Timeout',
+                                500 => '500 Internal Server Error',
+                                502 => '502 Bad Gateway',
+                                503 => '503 Service Unavailable'
+                                );
+        
     public function __construct($pUrl)
     {
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded for using this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded for using this class!');
-    
+            
         $this->url = $pUrl;
     }
-   
+        
     private function getHttpErrorMessage($pErrorNumber)
     {
         return isset($this->httpErrors[$pErrorNumber]) ? $this->httpErrors[$pErrorNumber] : null;
     }
-    
+        
     public function setDebug($pIsDebug)
     {
         $this->is_debug = !empty($pIsDebug);
         return $this;
     }
-   
-  /*  public function setParametersStructure($pParametersStructure)
-    {
-        if (in_array($pParametersStructure, array('array', 'object')))
-        {
-            $this->parameters_structure = $pParametersStructure;
-        }
-        else
-        {
-            throw new UnexpectedValueException('Invalid parameters structure type.');
-        }
-        return $this;
-    } */
-   
+        
+        /*  public function setParametersStructure($pParametersStructure)
+         {
+         if (in_array($pParametersStructure, array('array', 'object')))
+         {
+         $this->parameters_structure = $pParametersStructure;
+         }
+         else
+         {
+         throw new UnexpectedValueException('Invalid parameters structure type.');
+         }
+         return $this;
+         } */
+        
     public function setCurlOptions($pOptionsArray)
     {
         if (is_array($pOptionsArray))
@@ -78,15 +72,15 @@ class Monero_Library
         }
         return $this;
     }
-    
-   public function _run($pMethod, $pParams)
+        
+    public function _run($pMethod, $pParams=null)
     {
         static $requestId = 0;
         // generating uniuqe id per process
         $requestId++;
         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
-       // $this->validate(false === is_array($pParams), 'Params must be given as array');
+        // $this->validate(false === is_array($pParams), 'Params must be given as array');
         // send params as an object or an array
         //$pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
         // Request (method invocation)
@@ -154,7 +148,7 @@ class Monero_Library
         curl_close($ch);
         return $response;
     }
-    
+        
     public function validate($pFailed, $pErrMsg)
     {
         if ($pFailed)
@@ -162,7 +156,7 @@ class Monero_Library
             throw new RuntimeException($pErrMsg);
         }
     }
-    
+        
     protected function debug($pAdd, $pShow = false)
     {
         static $debug, $startTime;
@@ -188,7 +182,7 @@ class Monero_Library
             $debug = $startTime = null;
         }
     }
-    
+        
     function getJsonLastErrorMsg()
     {
         if (!function_exists('json_last_error_msg'))
@@ -196,13 +190,13 @@ class Monero_Library
             function json_last_error_msg()
             {
                 static $errors = array(
-                    JSON_ERROR_NONE           => 'No error',
-                    JSON_ERROR_DEPTH          => 'Maximum stack depth exceeded',
-                    JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
-                    JSON_ERROR_CTRL_CHAR      => 'Unexpected control character found',
-                    JSON_ERROR_SYNTAX         => 'Syntax error',
-                    JSON_ERROR_UTF8           => 'Malformed UTF-8 characters, possibly incorrectly encoded'
-                );
+                                        JSON_ERROR_NONE           => 'No error',
+                                        JSON_ERROR_DEPTH          => 'Maximum stack depth exceeded',
+                                        JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
+                                        JSON_ERROR_CTRL_CHAR      => 'Unexpected control character found',
+                                        JSON_ERROR_SYNTAX         => 'Syntax error',
+                                        JSON_ERROR_UTF8           => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+                                        );
                 $error = json_last_error();
                 return array_key_exists($error, $errors) ? $errors[$error] : 'Unknown error (' . $error . ')';
             }
@@ -268,7 +262,7 @@ class Monero_Library
         } else {
             $split_params = array('integrated_address' => $integrated_address);
             $split_methods = $this->_run('split_integrated_address', $split_params);
-            return $split_methods;
+                return $split_methods;
         }
     }
     public function make_uri($address, $amount, $recipient_name = null, $description = null)
@@ -305,4 +299,158 @@ class Monero_Library
         $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
         return $get_bulk_payments;
     }
-} 
+}
+
+class Monero
+{
+    private $monero_daemon;
+    
+    public function __construct()
+    {
+        $this->monero_daemon = new Monero_Library('http://127.0.0.1:18082/json_rpc'); // TODO: Get address:port from admin panel
+    }
+    
+    public function retriveprice($currency)
+    {
+        $xmr_price = file_get_contents('https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=BTC,USD,EUR,CAD,INR,GBP&extraParams=monero_magento');
+        $price = json_decode($xmr_price, TRUE);
+        switch ($currency) {
+            case 'USD':
+                return $price['USD'];
+            case 'EUR':
+                return $price['EUR'];
+            case 'CAD':
+                return $price['CAD'];
+            case 'GBP':
+                return $price['GBP'];
+            case 'INR':
+                return $price['INR'];
+            case 'XMR':
+                $price = '1';
+                return $price;
+        }
+    }
+    
+    public function paymentid_cookie()
+    {
+        if (!isset($_COOKIE['payment_id']))
+        {
+            $payment_id = bin2hex(openssl_random_pseudo_bytes(8));
+            setcookie('payment_id', $payment_id, time() + 2700);
+        }
+        else
+            $payment_id = $_COOKIE['payment_id'];
+        return $payment_id;
+    }
+    
+    public function changeto($amount, $currency)
+    {
+        $rate = $this->retriveprice($currency);
+        $price_converted = $amount / $rate;
+        $converted_rounded = round($price_converted, 12); //the moneo wallet can't handle decimals smaller than 0.000000000001
+            return $converted_rounded;
+    }
+    
+    public function verify_payment($payment_id, $amount)
+    {
+        $message = "We are waiting for your payment to be confirmed";
+        $amount_atomic_units = $amount * 1000000000000;
+        $get_payments_method = $this->monero_daemon->get_payments($payment_id);
+        if (isset($get_payments_method["payments"][0]["amount"]))
+        {
+            if ($get_payments_method["payments"][0]["amount"] >= $amount_atomic_units)
+            {
+                $message = "Payment has been received and confirmed. Thanks!";
+            }
+        }
+        return $message;
+    }
+    public function integrated_address($payment_id)
+    {
+        $integrated_address = $this->monero_daemon->make_integrated_address($payment_id);
+        $parsed_address = $integrated_address['integrated_address'];
+        return $parsed_address;
+    }
+}
+    
+class MoneroPayment extends \Magento\Framework\App\Action\Action
+{
+    public function __construct(\Magento\Framework\App\Action\Context $context)
+    {
+        parent::__construct($context);
+    }
+    public $monero;
+    
+    public function execute()
+    {
+        $monero = new Monero(); // TODO: Get address:port from admin panel
+        $currency = 'USD';
+        $payment_id = $monero->paymentid_cookie();
+        $integrated_address = $monero->integrated_address($payment_id);
+        $price = "place holder";
+        echo "
+        <head>
+        <!--Import Google Icon Font-->
+        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
+        
+        <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>
+        
+        <!--Let browser know website is optimized for mobile-->
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+            </head>
+            
+            <body>
+            <!-- page container  -->
+            <div class='page-container'>
+            
+            
+            <!-- monero container payment box -->
+            <div class='container-xmr-payment'>
+            
+            
+            <!-- header -->
+            <div class='header-xmr-payment'>
+            <span class='logo-xmr'><img src='http://cdn.monerointegrations.com/logomonero.png' /></span>
+            <span class='xmr-payment-text-header'><h2>MONERO PAYMENT</h2></span>
+            </div>
+            <!-- end header -->
+            
+            <!-- xmr content box -->
+            <div class='content-xmr-payment'>
+            
+            <div class='xmr-amount-send'>
+            <span class='xmr-label'>Send:</span>
+            <div class='xmr-amount-box'>$price</div><div class='xmr-box'>XMR</div>
+            </div>
+            
+            <div class='xmr-address'>
+            <span class='xmr-label'>To this address:</span>
+            <div class='xmr-address-box'>$integrated_address</div>
+            </div>
+            <div class='xmr-qr-code'>
+            <span class='xmr-label'>Or scan QR:</span>
+            <div class='xmr-qr-code-box'><img src='https://api.qrserver.com/v1/create-qr-code/? size=200x200&data=monero:$integrated_address' /></div>
+            </div>
+            
+            <div class='clear'></div>
+            </div>
+            
+            <!-- end content box -->
+            
+            <!-- footer xmr payment -->
+            <div class='footer-xmr-payment'>
+            <a href='#'>Help</a> | <a href='#'>About Monero</a>
+            </div>
+            <!-- end footer xmr payment -->
+            
+            </div>
+            <!-- end monero container payment box -->
+            
+            </div>
+            <!-- end page container  -->
+            </body>
+            ";
+            echo "<script type='text/javascript'>setTimeout(function () { location.reload(true); }, 30000);</script>";
+    }
+}
