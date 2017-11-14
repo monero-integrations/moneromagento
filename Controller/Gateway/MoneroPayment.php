@@ -305,9 +305,9 @@ class Monero
 {
     private $monero_daemon;
     
-    public function __construct()
+    public function __construct($rpc_address, $rpc_port)
     {
-        $this->monero_daemon = new Monero_Library('http://127.0.0.1:18082/json_rpc'); // TODO: Get address:port from admin panel
+        $this->monero_daemon = new Monero_Library('http://' . $rpc_address . ':'. $rpc_port . '/json_rpc'); // TODO: Get address:port from admin panel
     }
     
     public function retriveprice($currency)
@@ -384,7 +384,9 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
     
     public function execute()
     {
-        $monero = new Monero(); // TODO: Get address:port from admin panel
+        $rpc_address = $this->helper->grabConfig('payment/custompayment/rpc_address');
+        $rpc_port = $this->helper->grabConfig('payment/custompayment/rpc_port');
+        $monero = new Monero($rpc_address, $rpc_port);
         $currency = 'USD';
         $payment_id = $monero->paymentid_cookie();
         $integrated_address = $monero->integrated_address($payment_id);

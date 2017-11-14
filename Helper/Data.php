@@ -10,8 +10,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_scopeConfig = $scopeConfig;
     }
     
-    public function address()
+    public function grabConfig($path)
     {
-        return $this->_scopeConfig->getValue('payment/custompayment/xmr_address', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 }
