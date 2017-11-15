@@ -347,7 +347,7 @@ class Monero
     {
         $rate = $this->retriveprice($currency);
         $price_converted = $amount / $rate;
-        $converted_rounded = round($price_converted, 12); //the moneo wallet can't handle decimals smaller than 0.000000000001
+        $converted_rounded = round($price_converted, 11); //the moneo wallet can't handle decimals smaller than 0.000000000001
             return $converted_rounded;
     }
     
@@ -361,9 +361,10 @@ class Monero
             if ($get_payments_method["payments"][0]["amount"] >= $amount_atomic_units)
             {
                 $message = "Payment has been received and confirmed. Thanks!";
+                return true;
             }
         }
-        return $message;
+        return false;
     }
     public function integrated_address($payment_id)
     {
@@ -375,9 +376,10 @@ class Monero
     
 class MoneroPayment extends \Magento\Framework\App\Action\Action
 {
-    public function __construct(\MoneroIntegrations\Custompayment\Helper\Data $helper, \Magento\Framework\App\Action\Context $context)
+    public function __construct(\MoneroIntegrations\Custompayment\Helper\Data $helper,\Magento\Checkout\Model\Session $checkoutSession, \Magento\Framework\App\Action\Context $context)
     {
         $this->helper = $helper;
+        $this->checkoutSession = $checkoutSession;
         parent::__construct($context);
     }
     public $monero;
@@ -387,10 +389,21 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         $rpc_address = $this->helper->grabConfig('payment/custompayment/rpc_address');
         $rpc_port = $this->helper->grabConfig('payment/custompayment/rpc_port');
         $monero = new Monero($rpc_address, $rpc_port);
+        
         $currency = 'USD';
+        $grandTotal = $this->checkoutSession->getQuote()->getGrandTotal();
+        
+        $price = $monero->changeto($grandTotal, $currency);
         $payment_id = $monero->paymentid_cookie();
         $integrated_address = $monero->integrated_address($payment_id);
-        $price = "place holder";
+        $status = $monero->verify_payment($payment_id, $price);
+        if($status)
+        {
+            $status_message = "Payment has been received and confirmed. Thanks!";
+        }
+        else{
+            $status_message =  "we are waiting for your payment to be confirmed";
+        }
         echo "
         <head>
         <!--Import Google Icon Font-->
@@ -415,7 +428,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <!-- header -->
             <div class='header-xmr-payment'>
             <span class='logo-xmr'><img src='http://cdn.monerointegrations.com/logomonero.png' /></span>
-            <span class='xmr-payment-text-header'><h2>MONERO PAYMENT</h2></span>
+            <span class='xmr-payment-text-header'><h2>MONERO PAYMENT $status_message</h2></span>
             </div>
             <!-- end header -->
             
