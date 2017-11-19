@@ -579,6 +579,12 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <!-- end page container  -->
             </body>
             ";
+        $items = $this->checkoutSession->getQuote()->getAllItems();
+        foreach($items as $item)
+        {
+            $qty = $item->getQty();
+            $prodId = $item->getProductId();
+        }
         $orderData=[
                  'currency_id'  => $currency,
                  'email'        => $email,
@@ -594,7 +600,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                  'fax' => $phone,
                  'save_in_address_book' => 1
              ],
-             'items'=> [['product_id'=>1,'qty'=>1]] //place holder
+             'items'=> [['product_id'=>$prodId,'qty'=>$qty]]
          ];
         if(isset($_GET['ordered']))
         {
