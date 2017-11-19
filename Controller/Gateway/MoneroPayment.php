@@ -376,16 +376,61 @@ class Monero
     
 class MoneroPayment extends \Magento\Framework\App\Action\Action
 {
-    public function __construct(\MoneroIntegrations\Custompayment\Helper\Data $helper,\Magento\Checkout\Model\Session $checkoutSession, \Magento\Framework\App\Action\Context $context)
+    public function __construct(\MoneroIntegrations\Custompayment\Helper\Data $helper,\Magento\Checkout\Model\Session $checkoutSession, \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Checkout\Model\Cart $cart, \Magento\Framework\App\Action\Context $context)
     {
         $this->helper = $helper;
+        $this->_storeManager = $storeManager;
         $this->checkoutSession = $checkoutSession;
+        $this->_cart = $cart;
         parent::__construct($context);
     }
+    
     public $monero;
     
     public function execute()
     {
+        $first = '';
+        $last = '';
+        $email = '';
+        $phone = '';
+        $city = '';
+        $street = '';
+        $postal = '';
+        $country = '';
+        $paramCount = 0;
+        
+        if(isset($_GET['first'])){
+            $first = $_GET['first'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['last'])){
+            $last = $_GET['last'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['email'])){
+            $email = $_GET['email'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['phone'])){
+            $phone = $_GET['phone'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['city'])){
+            $city = $_GET['city'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['street'])){
+            $street = $_GET['street'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['postal'])){
+            $postal = $_GET['postal'];
+            $paramCount += 1;
+        }
+        if(isset($_GET['country'])){
+            $country = $_GET['country'];
+        }
+        
         $rpc_address = $this->helper->grabConfig('payment/custompayment/rpc_address');
         $rpc_port = $this->helper->grabConfig('payment/custompayment/rpc_port');
         $monero = new Monero($rpc_address, $rpc_port);
@@ -409,7 +454,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         <!--Import Google Icon Font-->
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
-        
+        <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js' type='text/javascript'></script>
         <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>
         
         <!--Let browser know website is optimized for mobile-->
@@ -464,9 +509,97 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <!-- end monero container payment box -->
             
             </div>
+            <form id='first' action='MoneroPayment' action='post'>
+                Firstname
+            <input type='text' name='first' value=$first>
+            </form>
+            
+            <form id='last' action='MoneroPayment' action='post'>
+                Lastname
+            <input type='text' name='last' value=$last>
+            </form>
+            <form id='email' action='MoneroPayment' action='post'>
+                E-mail
+            <input type='text' name='email' value=$email>
+            </form>
+            <form id='phone' action='MoneroPayment' action='post'>
+                Phone Number
+            <input type='text' name='phone' value=$phone>
+            </form>
+            
+            <h2> Shipping Address </h2>
+            <select id='country'>
+                <option value='US'>USA</option>
+                <option value='FR'>FR</option> <!-- TODO: add more counties  -->
+            </select>
+            <br></br>
+            <form id='city' action='MoneroPayment' action='post'>
+                City
+            <input type='text' name='city' value=$city>
+            </form>
+            <form id='street' action='MoneroPayment' action='post'>
+                Street
+            <input type='text' name='street' value=$street>
+            </form>
+            <form id='postal' action='MoneroPayment' action='post'>
+                Postal Code
+            <input type='text' name='postal' value=$postal>
+            </form>
+        
+        <button type='button'>Submit</button>
+        <p></p>
+        <script type='text/javascript'>
+        $(document).ready(function(){
+                          $('button').click(function(){
+                                            var basePath = 'MoneroPayment?';
+                                            var firstS = $('#first').serialize();
+                                            var lastS = $('#last').serialize();
+                                            var emailS = $('#email').serialize();
+                                            var phoneS =  $('#phone').serialize();
+                                            var cityS = $('#city').serialize();
+                                            var streetS = $('#street').serialize();
+                                            var postalS = $('#postal').serialize();
+                                            var countryS = document.getElementById('country').value;
+                                            
+                                            var redirectUrl = basePath.concat(firstS,'&' , lastS, '&', emailS, '&', phoneS, '&', cityS, '&', streetS, '&', postalS, '&country=', countryS);
+                                            window.location.replace(redirectUrl);
+                                            });
+                          });
+        </script>
+        
             <!-- end page container  -->
             </body>
             ";
-            echo "<script type='text/javascript'>setTimeout(function () { location.reload(true); }, 30000);</script>";
+        $orderData=[
+                 'currency_id'  => $currency,
+                 'email'        => $email,
+                 'shipping_address' =>[
+                 'firstname'    => $first,
+                 'lastname'     => $last,
+                 'street' => $street,
+                 'city' => $city,
+                 'country_id' => $country,
+                 'region' => '001', // place holder
+                 'postcode' => $postal,
+                 'telephone' => $phone,
+                 'fax' => $phone,
+                 'save_in_address_book' => 1
+             ],
+             'items'=> [['product_id'=>1,'qty'=>1]] //place holder
+         ];
+        if(isset($_GET['ordered']))
+        {
+            echo "<script type='text/javascript'>setTimeout(function () { location.reload(true); }, 30000);</script>"; // reload to try to verify payment after order data given
+            if($status)
+            {
+                $this->helper->createOrder($orderData);
+            }
+        }
+        else{
+            if($paramCount == 7) // check that all fields have been filled out
+            {
+                echo "<script type='text/javascript'>window.location.replace('MoneroPayment?first=$first&last=$last&email=$email&phone=$phone&city=$city&street=$street&postal=$postal&country=$country&ordered=1')</script>";
+            }
+        }
     }
 }
