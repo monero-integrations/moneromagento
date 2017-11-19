@@ -455,6 +455,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,800' rel='stylesheet'>
         <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js' type='text/javascript'></script>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' type='text/css'>
         <link href='http://cdn.monerointegrations.com/style.css' rel='stylesheet'>
         
         <!--Let browser know website is optimized for mobile-->
@@ -509,24 +510,32 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <!-- end monero container payment box -->
             
             </div>
-            <form id='first' action='MoneroPayment' action='post'>
-                Firstname
-            <input type='text' name='first' value=$first>
-            </form>
-            
+            <br></br>
+            <div class='container'>
+            <div class='row'>
+            <div class='col-lg-2'>
+                    <form id='first' action='MoneroPayment' action='post'>
+                        Firstname
+                        <input type='text' name='first' value=$first class='form-control' placeholder='.col-lg-3'>
+                    </form>
+            </div>
+            <div class='col-lg-3'>
             <form id='last' action='MoneroPayment' action='post'>
                 Lastname
-            <input type='text' name='last' value=$last>
+            <input type='text' name='last' value=$last class='form-control' placeholder='.col-lg-3'>
             </form>
+            </div>
+            <div class='col-xs-4'>
             <form id='email' action='MoneroPayment' action='post'>
                 E-mail
             <input type='text' name='email' value=$email>
             </form>
+            </div>
             <form id='phone' action='MoneroPayment' action='post'>
                 Phone Number
             <input type='text' name='phone' value=$phone>
             </form>
-            
+            </div>
             <h2> Shipping Address </h2>
             <select id='country'>
                 <option value='US'>USA</option>
@@ -566,7 +575,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                                             });
                           });
         </script>
-        
+        </div>
             <!-- end page container  -->
             </body>
             ";
