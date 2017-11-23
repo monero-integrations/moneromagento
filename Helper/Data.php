@@ -1,10 +1,9 @@
 <?php
-
 namespace MoneroIntegrations\Custompayment\Helper;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    public function __construct( \Magento\Framework\App\Helper\Context $context, \Magento\Store\Model\StoreManagerInterface $storeManager,\Magento\Catalog\Model\ProductFactory $productFactory, \Magento\Quote\Model\QuoteManagement $quoteManagement, \Magento\Customer\Model\CustomerFactory $customerFactory, \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository, \Magento\Sales\Model\Service\OrderService $orderService, \Magento\Quote\Api\CartRepositoryInterface $cartRepositoryInterface, \Magento\Quote\Api\CartManagementInterface $cartManagementInterface, \Magento\Quote\Model\Quote\Address\Rate $shippingRate, \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
+        public function __construct( \Magento\Framework\App\Helper\Context $context, \Magento\Store\Model\StoreManagerInterface $storeManager,\Magento\Catalog\Model\ProductFactory $productFactory, \Magento\Quote\Model\QuoteManagement $quoteManagement, \Magento\Customer\Model\CustomerFactory $customerFactory, \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository, \Magento\Sales\Model\Service\OrderService $orderService, \Magento\Quote\Api\CartRepositoryInterface $cartRepositoryInterface, \Magento\Quote\Api\CartManagementInterface $cartManagementInterface, \Magento\Quote\Model\Quote\Address\Rate $shippingRate, \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
     {
         $this->_storeManager = $storeManager;
         $this->_productFactory = $productFactory;
@@ -62,7 +61,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $shippingAddress = $cart->getShippingAddress();
         $shippingAddress->setCollectShippingRates(true)
         ->collectShippingRates()
-        ->setShippingMethod('flatrate_flatrate');
+        ->setShippingMethod('freeshipping_freeshipping'); // default shipping method
         $cart->setPaymentMethod('checkmo'); //use this as payment method for now
         $cart->setInventoryProcessed(false);
         $cart->getPayment()->importData(['method' => 'checkmo']);

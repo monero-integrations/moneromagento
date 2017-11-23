@@ -397,6 +397,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         $street = '';
         $postal = '';
         $country = '';
+        $region = '';
         $paramCount = 0;
         
         if(isset($_GET['first'])){
@@ -430,6 +431,9 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         if(isset($_GET['country'])){
             $country = $_GET['country'];
         }
+        if(isset($_GET['region'])){
+            $region = $_GET['region'];
+        }
         
         $rpc_address = $this->helper->grabConfig('payment/custompayment/rpc_address');
         $rpc_port = $this->helper->grabConfig('payment/custompayment/rpc_port');
@@ -447,7 +451,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             $status_message = "Payment has been received and confirmed. Thanks!";
         }
         else{
-            $status_message =  "we are waiting for your payment to be confirmed";
+            $status_message =  "We are waiting for your payment to be confirmed";
         }
         echo "
         <head>
@@ -516,13 +520,13 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <div class='col-lg-2'>
                     <form id='first' action='MoneroPayment' action='post'>
                         Firstname
-                        <input type='text' name='first' value=$first class='form-control' placeholder='.col-lg-3'>
+                        <input type='text' name='first' class='form-control' value=$first>
                     </form>
             </div>
             <div class='col-lg-3'>
             <form id='last' action='MoneroPayment' action='post'>
                 Lastname
-            <input type='text' name='last' value=$last class='form-control' placeholder='.col-lg-3'>
+            <input type='text' name='last' class='form-control' value=$last>
             </form>
             </div>
             <div class='col-xs-4'>
@@ -538,8 +542,69 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             </div>
             <h2> Shipping Address </h2>
             <select id='country'>
-                <option value='US'>USA</option>
-                <option value='FR'>FR</option> <!-- TODO: add more counties  -->
+                <option value='CA'>Canada</option>
+                <option value='US'>United States</option> <!-- TODO: add more counties  -->
+            </select>
+            <select id='region'>
+                <option>---Canada---</option>
+                <option value='066'>Alberta</option>
+                <option value='067'>British Comumbia</option>
+                <option value='068'>Manitoba</option>
+                <option value='070'>New Brunswick</option>
+                <option value='074'>Ontario</option>
+                <option value='076'>Quebec</option>
+                <option>---United States---</option>
+                <option value='001'>Alabama</option>
+                <option value='002'>Alaska</option>
+                <option value='004'>Arizona</option>
+                <option value='005'>Arkansas</option>
+                <option value='012'>California</option>
+                <option value='013'>Colorado</option>
+                <option value='014'>Connecticut</option>
+                <option value='015'>Delaware</option>
+                <option value='016'>District of Columbia</option>
+                <option value='018'>Florida</option>
+                <option value='019'>Georgia</option>
+                <option value='021'>Georgia</option>
+                <option value='022'>Idaho</option>
+                <option value='023'>Illinois</option>
+                <option value='024'>Indiana</option>
+                <option value='025'>Iowa</option>
+                <option value='026'>Kansas</option>
+                <option value='027'>Kentucky</option>
+                <option value='028'>Louisiana</option>
+                <option value='029'>Maine</option>
+                <option value='031'>Maryland</option>
+                <option value='032'>Massachusettes</option>
+                <option value='033'>Michigain</option>
+                <option value='034'>Minnesota</option>
+                <option value='035'>Mississippi</option>
+                <option value='036'>Missouri</option>
+                <option value='037'>Montana</option>
+                <option value='038'>Nebraska</option>
+                <option value='039'>Nevada</option>
+                <option value='040'>New Hampshire</option>
+                <option value='041'>New Jersey</option>
+                <option value='042'>New Mexico</option>
+                <option value='043'>New York</option>
+                <option value='044'>North Carolina</option>
+                <option value='045'>North Dakota</option>
+                <option value='047'>Ohio</option>
+                <option value='048'>Oklahoma</option>
+                <option value='049'>Oregon</option>
+                <option value='051'>Pennsylvania</option>
+                <option value='053'>Rhode Island</option>
+                <option value='054'>South Carolina</option>
+                <option value='055'>South Dakota</option>
+                <option value='056'>Tennesee</option>
+                <option value='057'>Texas</option>
+                <option value='058'>Utah</option>
+                <option value='059'>Vermont</option>
+                <option value='061'>Virginia</option>
+                <option value='062'>Washington</option>
+                <option value='063'>West Virginia</option>
+                <option value='064'>Wisconsin</option>
+                <option value='065'>Wyoming</option>
             </select>
             <br></br>
             <form id='city' action='MoneroPayment' action='post'>
@@ -569,8 +634,9 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                                             var streetS = $('#street').serialize();
                                             var postalS = $('#postal').serialize();
                                             var countryS = document.getElementById('country').value;
+                                            var regionS = document.getElementById('region').value;
                                             
-                                            var redirectUrl = basePath.concat(firstS,'&' , lastS, '&', emailS, '&', phoneS, '&', cityS, '&', streetS, '&', postalS, '&country=', countryS);
+                                            var redirectUrl = basePath.concat(firstS,'&' , lastS, '&', emailS, '&', phoneS, '&', cityS, '&', streetS, '&', postalS, '&country=', countryS, '&region=', regionS);
                                             window.location.replace(redirectUrl);
                                             });
                           });
@@ -594,7 +660,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                  'street' => $street,
                  'city' => $city,
                  'country_id' => $country,
-                 'region' => '001', // place holder
+                 'region' => $region,
                  'postcode' => $postal,
                  'telephone' => $phone,
                  'fax' => $phone,
@@ -613,8 +679,9 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
         else{
             if($paramCount == 7) // check that all fields have been filled out
             {
-                echo "<script type='text/javascript'>window.location.replace('MoneroPayment?first=$first&last=$last&email=$email&phone=$phone&city=$city&street=$street&postal=$postal&country=$country&ordered=1')</script>";
+                echo "<script type='text/javascript'>window.location.replace('MoneroPayment?first=$first&last=$last&email=$email&phone=$phone&city=$city&street=$street&postal=$postal&country=$country&region=$region&ordered=1')</script>";
             }
         }
     }
 }
+
