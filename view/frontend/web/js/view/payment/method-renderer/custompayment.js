@@ -10,6 +10,7 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/totals',
         'Magento_Catalog/js/price-utils',
+        'Magento_Customer/js/customer-data',
         'mage/url'
         ],
        function (
@@ -21,6 +22,7 @@ define(
                  placeOrderAction,
                  selectPaymentMethodAction,
                  customer,
+                 customerData,
                  checkoutData,
                  additionalValidators,
                  url) {
@@ -32,7 +34,9 @@ define(
                    placeOrder: function () {
                        var redirectUrl = 'moneropayment/Gateway/MoneroPayment';
                        console.log(redirectUrl);
-                       window.location.replace(url.build(redirectUrl));
+                               var customer = window.customerData;
+                        console.log(customer);
+                       //window.location.replace(url.build(redirectUrl));
                        }
                });
        });
