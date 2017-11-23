@@ -34,9 +34,7 @@ define(
                    placeOrder: function () {
                        var redirectUrl = 'moneropayment/Gateway/MoneroPayment';
                        console.log(redirectUrl);
-                               var customer = window.customerData;
-                        console.log(customer);
-                       //window.location.replace(url.build(redirectUrl));
+                       window.location.replace(url.build(redirectUrl));
                        }
                });
        });
