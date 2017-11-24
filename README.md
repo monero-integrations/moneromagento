@@ -1,4 +1,4 @@
-# monero-magento2
+# Monero for Magento
 Monero Payment Gateway for Magento 2
 
 ## Dependencies
