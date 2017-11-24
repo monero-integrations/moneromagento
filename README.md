@@ -20,6 +20,16 @@ Installing with composer is the easiest way to install this plugin.
 - Then you can simply type `php composer require monerointegrations/moneropayment`
 
 ## After Install
+### Clear Cache
 - Run `php bin/magento setup:upgrade`
 - Flush cache with `php bin/magento cache:flush`
 - Clean cache with `php bin/magento cache:clean`
+
+### Setting-Up monero-wallet-rpc
+- Start up your monero-wallet-rpc with the following command: `./monero-wallet-rpc --rpc-bind-port 18082 --disable-rpc-login --log-level 2 --wallet-file /path/walletfile`. It is reccomended that you use the `--rpc-login` flag.
+
+### Setup
+- First, navigate to you site admin panel
+-Within that admin panel, navigate to `Stores > Configuration > Sales > Payment Methods`.
+- Under "Other Payment Methods" select "Monero Payment"
+- Select "Yes" for "Enabled" and enter your monero-wallet-rpc address and port
