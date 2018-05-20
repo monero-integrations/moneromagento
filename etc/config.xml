@@ -3,7 +3,7 @@
     <default>
         <payment>
             <custompayment>
-                <payment_action>authorize</payment_action><!-- You can use another methor like capture  -->
+                <payment_action>authorize</payment_action><!-- You can use another method like capture  -->
                 <model>MoneroIntegrations\Custompayment\Model\PaymentMethod</model>
                 <active>1</active>
                 <title>Monero Payment</title>
