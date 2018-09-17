@@ -76,7 +76,7 @@ class Monero_Library
     public function _run($pMethod, $pParams=null)
     {
         static $requestId = 0;
-        // generating uniuqe id per process
+        // generating unique id per process
         $requestId++;
         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
@@ -176,7 +176,7 @@ class Monero_Library
             // performance summary
             $debug .= 'Request time: ' . round($endTime - $startTime, 3) . ' s Memory usage: ' . round(memory_get_usage() / 1024) . " kb\r\n";
             echo nl2br($debug);
-            // send output imidiately
+            // send output immediately
             flush();
             // clean static
             $debug = $startTime = null;
@@ -254,7 +254,7 @@ class Monero_Library
         return $integrate_address_method;
     }
     /* A payment id can be passed as a string
-     A random payment id will be generatd if one is not given */
+     A random payment id will be generated if one is not given */
     public function split_integrated_address($integrated_address)
     {
         if (!isset($integrated_address)) {
@@ -347,7 +347,7 @@ class Monero
     {
         $rate = $this->retriveprice($currency);
         $price_converted = $amount / $rate;
-        $converted_rounded = round($price_converted, 11); //the moneo wallet can't handle decimals smaller than 0.000000000001
+        $converted_rounded = round($price_converted, 11); //the Monero wallet can't handle decimals smaller than 0.000000000001
             return $converted_rounded;
     }
     
@@ -471,7 +471,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <div class='page-container'>
             
             
-            <!-- monero container payment box -->
+            <!-- Monero container payment box -->
             <div class='container-xmr-payment'>
             
             
@@ -511,7 +511,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <!-- end footer xmr payment -->
             
             </div>
-            <!-- end monero container payment box -->
+            <!-- end Monero container payment box -->
             
             </div>
             <br></br>
@@ -548,7 +548,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
             <select id='region'>
                 <option>---Canada---</option>
                 <option value='066'>Alberta</option>
-                <option value='067'>British Comumbia</option>
+                <option value='067'>British Columbia</option>
                 <option value='068'>Manitoba</option>
                 <option value='070'>New Brunswick</option>
                 <option value='074'>Ontario</option>
@@ -575,8 +575,8 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                 <option value='028'>Louisiana</option>
                 <option value='029'>Maine</option>
                 <option value='031'>Maryland</option>
-                <option value='032'>Massachusettes</option>
-                <option value='033'>Michigain</option>
+                <option value='032'>Massachusetts</option>
+                <option value='033'>Michigan</option>
                 <option value='034'>Minnesota</option>
                 <option value='035'>Mississippi</option>
                 <option value='036'>Missouri</option>
@@ -596,7 +596,7 @@ class MoneroPayment extends \Magento\Framework\App\Action\Action
                 <option value='053'>Rhode Island</option>
                 <option value='054'>South Carolina</option>
                 <option value='055'>South Dakota</option>
-                <option value='056'>Tennesee</option>
+                <option value='056'>Tennessee</option>
                 <option value='057'>Texas</option>
                 <option value='058'>Utah</option>
                 <option value='059'>Vermont</option>
