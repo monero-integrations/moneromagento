@@ -14,6 +14,11 @@
                     <field id="rpc_port" translate="rpc_port" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Wallet-RPC Port</label>
                     </field>
+                    <field id="num_confirmations" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Number of Confirmations</label>
+                        <comment>Number of blockchain confirmations required before considering the payment successful. Use `0` for nearly instant confirmation.</comment>
+                        <validate>validate-zero-or-greater</validate>
+                    </field>
                 </group>
         </section>
     </system>

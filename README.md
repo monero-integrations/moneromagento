@@ -33,3 +33,4 @@ Installing with composer is the easiest way to install this plugin.
 -Within that admin panel, navigate to `Stores > Configuration > Sales > Payment Methods`.
 - Under "Other Payment Methods" select "Monero Payment"
 - Select "Yes" for "Enabled" and enter your monero-wallet-rpc address and port
+- "Number of confirmations" - Number of confirmations the transaction must recieve before the order is marked as complete. Use `0` for nearly instant confirmation. (Default: 5)

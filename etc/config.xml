@@ -8,6 +8,7 @@
                 <active>1</active>
                 <title>Monero Payment</title>
                 <order_status>pending_payment</order_status><!-- set default order status-->
+                <num_confirmations>5</num_confirmations>
             </custompayment>
         </payment>
     </default>
