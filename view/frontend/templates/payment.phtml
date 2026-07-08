@@ -1,0 +1,81 @@
+<?php
+/** @var \MoneroIntegrations\Custompayment\Block\Payment $block */
+?>
+<?php if ($block->isError()): ?>
+    <div class="monero-payment monero-payment-error">
+        <h1><?= $block->escapeHtml(__('Monero Payment')) ?></h1>
+        <p><?= $block->escapeHtml(__('Unable to prepare this Monero payment. Please contact the store owner.')) ?></p>
+        <?php if ($block->getIncrementId() !== ''): ?>
+            <p><?= $block->escapeHtml(__('Order: %1', $block->getIncrementId())) ?></p>
+        <?php endif; ?>
+    </div>
+<?php else: ?>
+    <div class="monero-payment"
+         data-monero-qr
+         data-monero-uri="<?= $block->escapeHtmlAttr($block->getMoneroUri()) ?>"
+         data-monero-state="<?= $block->escapeHtmlAttr($block->getState()) ?>"
+         data-monero-status-url="<?= $block->escapeUrl($block->getStatusUrl()) ?>"
+         data-monero-success-url="<?= $block->escapeUrl($block->getSuccessUrl()) ?>">
+        <h1><?= $block->escapeHtml(__('Monero Payment')) ?></h1>
+
+        <?php if ($block->isPaid()): ?>
+            <p class="monero-payment-status monero-paid">
+                <?= $block->escapeHtml(__('Payment received. Thank you! Returning you to the order confirmation page.')) ?>
+            </p>
+        <?php elseif ($block->isDetected()): ?>
+            <p class="monero-payment-status monero-detected">
+                <?= $block->escapeHtml(__('Payment detected. Waiting for it to be mined.')) ?>
+            </p>
+        <?php elseif ($block->isPartial()): ?>
+            <p class="monero-payment-status monero-waiting">
+                <?= $block->escapeHtml(__('Partial payment received. Please send the remaining amount to the same address.')) ?>
+            </p>
+        <?php else: ?>
+            <p class="monero-payment-status monero-waiting">
+                <?= $block->escapeHtml(__('Send the exact amount to the address below. This page updates while the payment is pending.')) ?>
+            </p>
+        <?php endif; ?>
+
+        <?php if (!$block->isPaid()): ?>
+            <div class="monero-payment-qr" aria-hidden="true"></div>
+        <?php endif; ?>
+
+        <dl class="monero-payment-details">
+            <dt><?= $block->escapeHtml(__('Order')) ?></dt>
+            <dd><?= $block->escapeHtml($block->getIncrementId()) ?></dd>
+
+            <dt><?= $block->escapeHtml(__('Amount')) ?></dt>
+            <dd><?= $block->escapeHtml($block->getAmountXmr()) ?> XMR</dd>
+
+            <dt class="monero-payment-partial-detail<?= $block->isPartial() ? '' : ' monero-hidden' ?>">
+                <?= $block->escapeHtml(__('Received')) ?>
+            </dt>
+            <dd class="monero-payment-partial-detail<?= $block->isPartial() ? '' : ' monero-hidden' ?>"
+                data-monero-received>
+                <?= $block->escapeHtml($block->getReceivedXmr()) ?> XMR
+            </dd>
+
+            <dt class="monero-payment-partial-detail<?= $block->isPartial() ? '' : ' monero-hidden' ?>">
+                <?= $block->escapeHtml(__('Remaining')) ?>
+            </dt>
+            <dd class="monero-payment-partial-detail<?= $block->isPartial() ? '' : ' monero-hidden' ?>"
+                data-monero-remaining>
+                <?= $block->escapeHtml($block->getRemainingXmr()) ?> XMR
+            </dd>
+
+            <dt><?= $block->escapeHtml(__('Address')) ?></dt>
+            <dd class="monero-payment-address"><?= $block->escapeHtml($block->getSubaddress()) ?></dd>
+
+            <dt><?= $block->escapeHtml(__('Confirmations required')) ?></dt>
+            <dd><?= $block->escapeHtml((string) $block->getConfirmationsRequired()) ?></dd>
+        </dl>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "[data-monero-qr]": {
+                "MoneroIntegrations_Custompayment/js/monero-qr": {}
+            }
+        }
+    </script>
+<?php endif; ?>

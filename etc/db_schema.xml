@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="monero_integrations_payment" resource="default" engine="innodb" comment="Monero Payment Records">
+        <column xsi:type="int" name="payment_id" unsigned="true" nullable="false" identity="true" comment="Payment ID"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" comment="Order ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="increment_id" nullable="false" length="32" comment="Order Increment ID"/>
+        <column xsi:type="varchar" name="subaddress" nullable="true" length="106" comment="Monero Subaddress"/>
+        <column xsi:type="varchar" name="amount_xmr" nullable="true" length="64" comment="XMR Amount"/>
+        <column xsi:type="bigint" name="amount_atomic" unsigned="true" nullable="false" default="0" comment="Atomic Amount"/>
+        <column xsi:type="varchar" name="order_currency" nullable="false" length="3" comment="Order Currency"/>
+        <column xsi:type="int" name="confirmations_required" unsigned="true" nullable="false" default="5" comment="Confirmations Required"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="16" default="pending" comment="Status"/>
+        <column xsi:type="bigint" name="total_received_atomic" unsigned="true" nullable="false" default="0" comment="Total Received Atomic"/>
+        <column xsi:type="boolean" name="order_synced" nullable="false" default="0" comment="Order Synced"/>
+        <column xsi:type="timestamp" name="paid_at" nullable="true" comment="Paid At"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="payment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MONERO_PAYMENT_ORDER_ID_SALES_ORDER_ENTITY_ID" table="monero_integrations_payment" column="order_id" referenceTable="sales_order" referenceColumn="entity_id" onDelete="NO ACTION"/>
+        <constraint xsi:type="unique" referenceId="MONERO_PAYMENT_ORDER_ID">
+            <column name="order_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MONERO_PAYMENT_SUBADDRESS">
+            <column name="subaddress"/>
+        </constraint>
+        <index referenceId="MONERO_PAYMENT_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="MONERO_PAYMENT_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MONERO_PAYMENT_ORDER_SYNCED" indexType="btree">
+            <column name="order_synced"/>
+        </index>
+    </table>
+    <table name="monero_integrations_transaction" resource="default" engine="innodb" comment="Monero Payment Transactions">
+        <column xsi:type="int" name="transaction_id" unsigned="true" nullable="false" identity="true" comment="Transaction ID"/>
+        <column xsi:type="int" name="payment_id" unsigned="true" nullable="false" comment="Payment ID"/>
+        <column xsi:type="varchar" name="txid" nullable="false" length="64" comment="Transaction Hash"/>
+        <column xsi:type="bigint" name="amount_atomic" unsigned="true" nullable="false" comment="Atomic Amount"/>
+        <column xsi:type="int" name="block_height" unsigned="true" nullable="false" default="0" comment="Block Height"/>
+        <column xsi:type="int" name="confirmations" unsigned="true" nullable="false" default="0" comment="Confirmations"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="transaction_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MONERO_TX_PAYMENT_ID_MONERO_PAYMENT_PAYMENT_ID" table="monero_integrations_transaction" column="payment_id" referenceTable="monero_integrations_payment" referenceColumn="payment_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MONERO_TX_PAYMENT_ID_TXID">
+            <column name="payment_id"/>
+            <column name="txid"/>
+        </constraint>
+        <index referenceId="MONERO_TX_TXID" indexType="btree">
+            <column name="txid"/>
+        </index>
+    </table>
+</schema>

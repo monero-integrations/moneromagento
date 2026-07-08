@@ -1,0 +1,53 @@
+.monero-payment {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.monero-payment-qr {
+    max-width: 260px;
+    margin: 24px 0;
+}
+
+.monero-payment-qr svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.monero-payment-details dt {
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.monero-payment-details dd {
+    margin: 0;
+}
+
+.monero-payment-checkout-note {
+    margin: 0 0 16px;
+}
+
+.monero-hidden {
+    display: none;
+}
+
+.monero-payment-address {
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.monero-payment-status.monero-paid {
+    color: #176b35;
+}
+
+.monero-payment-status.monero-waiting {
+    color: #8a5a00;
+}
+
+.monero-payment-status.monero-detected {
+    color: #8a5a00;
+}
+
+.monero-payment-status.monero-error {
+    color: #a30000;
+}

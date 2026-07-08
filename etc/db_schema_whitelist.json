@@ -1,0 +1,51 @@
+{
+    "monero_integrations_payment": {
+        "column": {
+            "payment_id": true,
+            "order_id": true,
+            "store_id": true,
+            "increment_id": true,
+            "subaddress": true,
+            "amount_xmr": true,
+            "amount_atomic": true,
+            "order_currency": true,
+            "confirmations_required": true,
+            "status": true,
+            "total_received_atomic": true,
+            "order_synced": true,
+            "paid_at": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MONERO_PAYMENT_ORDER_ID_SALES_ORDER_ENTITY_ID": true,
+            "MONERO_PAYMENT_ORDER_ID": true,
+            "MONERO_PAYMENT_SUBADDRESS": true
+        },
+        "index": {
+            "MONERO_PAYMENT_STATUS": true,
+            "MONERO_PAYMENT_STORE_ID": true,
+            "MONERO_PAYMENT_ORDER_SYNCED": true
+        }
+    },
+    "monero_integrations_transaction": {
+        "column": {
+            "transaction_id": true,
+            "payment_id": true,
+            "txid": true,
+            "amount_atomic": true,
+            "block_height": true,
+            "confirmations": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MONERO_TX_PAYMENT_ID_MONERO_PAYMENT_PAYMENT_ID": true,
+            "MONERO_TX_PAYMENT_ID_TXID": true
+        },
+        "index": {
+            "MONERO_TX_TXID": true
+        }
+    }
+}
