@@ -5,6 +5,9 @@ namespace MoneroIntegrations\Custompayment\Model\Wallet;
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * Minimal JSON-RPC over cURL client for monero-wallet-rpc.
+ */
 class JsonRpcClient
 {
     private $url;

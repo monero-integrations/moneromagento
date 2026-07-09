@@ -17,6 +17,9 @@ use MoneroIntegrations\Custompayment\Service\PaymentRecordService;
 use MoneroIntegrations\Custompayment\Service\PaymentSettlementService;
 use Psr\Log\LoggerInterface;
 
+/**
+ * JSON status endpoint polled by the payment page: re-runs settlement and returns the current payment state.
+ */
 class Status extends Action implements HttpGetActionInterface
 {
     private $clientFactory;

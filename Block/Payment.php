@@ -4,6 +4,9 @@ namespace MoneroIntegrations\Custompayment\Block;
 
 use Magento\Framework\View\Element\Template;
 
+/**
+ * Payment-page view block: exposes the order's Monero amount, subaddress, state and QR URI to the template.
+ */
 class Payment extends Template
 {
     public function isError()

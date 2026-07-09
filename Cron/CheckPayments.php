@@ -12,6 +12,9 @@ use MoneroIntegrations\Custompayment\Service\PaymentSettlementService;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+/**
+ * Cron job that settles pending Monero payments and repairs paid-but-unsynced orders.
+ */
 class CheckPayments
 {
     private $recordCollectionFactory;

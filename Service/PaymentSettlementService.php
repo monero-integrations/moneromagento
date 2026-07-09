@@ -19,6 +19,9 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Verifies wallet transfers and settles the Magento order (mark paid, invoice, cron repair) idempotently and locked.
+ */
 class PaymentSettlementService
 {
     private $transactionFactory;

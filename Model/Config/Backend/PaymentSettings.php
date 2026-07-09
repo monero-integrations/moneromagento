@@ -8,6 +8,9 @@ use Magento\Framework\Exception\LocalizedException;
 use MoneroIntegrations\Custompayment\Model\Wallet\RpcValidator;
 use MoneroIntegrations\Custompayment\Service\PaymentRecordService;
 
+/**
+ * Admin config backend that validates wallet-RPC, pricing and confirmation settings on save.
+ */
 class PaymentSettings extends Value
 {
     public function beforeSave()

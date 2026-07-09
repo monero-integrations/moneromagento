@@ -6,6 +6,9 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use MoneroIntegrations\Custompayment\Helper\Data;
 use RuntimeException;
 
+/**
+ * Builds a MoneroClient from validated per-store wallet-RPC and pricing configuration.
+ */
 class ClientFactory
 {
     private $helper;

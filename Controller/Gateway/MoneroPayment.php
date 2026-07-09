@@ -17,6 +17,9 @@ use MoneroIntegrations\Custompayment\Service\PaymentRecordService;
 use MoneroIntegrations\Custompayment\Service\PaymentSettlementService;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Renders the order-specific Monero payment page, canonicalized by payment_id and served no-store.
+ */
 class MoneroPayment extends Action implements HttpGetActionInterface
 {
     private $checkoutSession;

@@ -4,6 +4,9 @@ namespace MoneroIntegrations\Custompayment\Model\Wallet;
 
 use RuntimeException;
 
+/**
+ * Wallet-RPC operations: create subaddress, read transfers, verify payment, and convert fiat to atomic XMR.
+ */
 class MoneroClient
 {
     const ATOMIC_UNITS = 1000000000000;

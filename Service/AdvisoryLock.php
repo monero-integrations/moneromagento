@@ -5,6 +5,9 @@ namespace MoneroIntegrations\Custompayment\Service;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
 
+/**
+ * MySQL advisory-lock (GET_LOCK) wrapper that serializes per-order settlement on one connection.
+ */
 class AdvisoryLock
 {
     private $resourceConnection;

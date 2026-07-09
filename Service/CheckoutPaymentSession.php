@@ -6,6 +6,9 @@ use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Sales\Model\Order;
 use MoneroIntegrations\Custompayment\Model\PaymentRecord;
 
+/**
+ * Binds Monero payment_ids to the buyer's checkout session so the status endpoint can authorize polling.
+ */
 class CheckoutPaymentSession
 {
     const SESSION_KEY = 'monero_payment_ids';

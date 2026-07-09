@@ -15,6 +15,9 @@ use MoneroIntegrations\Custompayment\Model\ResourceModel\PaymentRecord as Paymen
 use MoneroIntegrations\Custompayment\Model\Wallet\MoneroClient;
 use Throwable;
 
+/**
+ * Creates and loads the one Monero payment record per order, allocating a subaddress under a lock.
+ */
 class PaymentRecordService
 {
     const MAX_CONFIRMATIONS = 1000;

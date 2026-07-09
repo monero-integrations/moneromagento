@@ -4,6 +4,9 @@ namespace MoneroIntegrations\Custompayment\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
+/**
+ * Durable record of one Monero payment per Magento order.
+ */
 class PaymentRecord extends AbstractModel
 {
     const STATUS_PENDING = 'pending';

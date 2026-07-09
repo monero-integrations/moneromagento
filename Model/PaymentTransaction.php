@@ -4,6 +4,9 @@ namespace MoneroIntegrations\Custompayment\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
+/**
+ * A stored incoming wallet transfer (txid) belonging to a payment record.
+ */
 class PaymentTransaction extends AbstractModel
 {
     protected function _construct()

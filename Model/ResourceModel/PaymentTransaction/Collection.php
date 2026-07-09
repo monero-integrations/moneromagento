@@ -4,6 +4,9 @@ namespace MoneroIntegrations\Custompayment\Model\ResourceModel\PaymentTransactio
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
+/**
+ * Collection of Monero payment transactions.
+ */
 class Collection extends AbstractCollection
 {
     protected $_idFieldName = 'transaction_id';

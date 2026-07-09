@@ -8,6 +8,9 @@ use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 use MoneroIntegrations\Custompayment\Model\Wallet\RpcValidator;
 
+/**
+ * Monero offline payment method; hidden at checkout until the wallet RPC host and port are configured.
+ */
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const METHOD_CODE = 'custompayment';

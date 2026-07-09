@@ -2,6 +2,9 @@
 
 namespace MoneroIntegrations\Custompayment\Model\Wallet;
 
+/**
+ * Stateless validation of wallet-RPC host, port and loopback rules.
+ */
 class RpcValidator
 {
     public static function isValidHost($host)
