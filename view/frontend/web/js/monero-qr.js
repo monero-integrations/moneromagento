@@ -1,4 +1,4 @@
-define(['qrcodeGenerator', 'jquery'], function (qrcode, $) {
+define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t) {
     'use strict';
 
     return function (config, element) {
@@ -42,24 +42,30 @@ define(['qrcodeGenerator', 'jquery'], function (qrcode, $) {
         function setStatus(nextState) {
             state = nextState || state;
             element.setAttribute('data-monero-state', state);
+            if (target && state !== 'paid' && state !== 'overpaid' && state !== 'detected') {
+                target.style.display = '';
+            }
             if (!statusMessage) {
                 return;
             }
             if (state === 'paid' || state === 'overpaid') {
                 statusMessage.className = 'monero-payment-status monero-paid';
-                statusMessage.textContent = 'Payment received. Thank you! Returning you to the order confirmation page.';
+                statusMessage.textContent = $t('Payment received. Thank you! Returning you to the order confirmation page.');
                 if (target) {
                     target.style.display = 'none';
                 }
             } else if (state === 'detected') {
                 statusMessage.className = 'monero-payment-status monero-detected';
-                statusMessage.textContent = 'Payment detected. Waiting for it to be mined.';
+                statusMessage.textContent = $t('Payment detected. Waiting for the required confirmations.');
+                if (target) {
+                    target.style.display = 'none';
+                }
             } else if (state === 'partial') {
                 statusMessage.className = 'monero-payment-status monero-waiting';
-                statusMessage.textContent = 'Partial payment received. Please send the remaining amount to the same address.';
+                statusMessage.textContent = $t('Partial payment received. Please send the remaining amount to the same address.');
             } else {
                 statusMessage.className = 'monero-payment-status monero-waiting';
-                statusMessage.textContent = 'Waiting for payment. This page updates automatically.';
+                statusMessage.textContent = $t('Waiting for payment. This page updates automatically.');
             }
         }
 
@@ -181,6 +187,7 @@ define(['qrcodeGenerator', 'jquery'], function (qrcode, $) {
         }
 
         renderQr(uri);
+        setStatus(state);
         if (state === 'paid' || state === 'overpaid') {
             redirectWhenPaid(successUrl);
         } else {

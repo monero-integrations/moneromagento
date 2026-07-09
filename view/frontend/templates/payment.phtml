@@ -19,19 +19,19 @@
         <h1><?= $block->escapeHtml(__('Monero Payment')) ?></h1>
 
         <?php if ($block->isPaid()): ?>
-            <p class="monero-payment-status monero-paid">
+            <p class="monero-payment-status monero-paid" aria-live="polite">
                 <?= $block->escapeHtml(__('Payment received. Thank you! Returning you to the order confirmation page.')) ?>
             </p>
         <?php elseif ($block->isDetected()): ?>
-            <p class="monero-payment-status monero-detected">
-                <?= $block->escapeHtml(__('Payment detected. Waiting for it to be mined.')) ?>
+            <p class="monero-payment-status monero-detected" aria-live="polite">
+                <?= $block->escapeHtml(__('Payment detected. Waiting for the required confirmations.')) ?>
             </p>
         <?php elseif ($block->isPartial()): ?>
-            <p class="monero-payment-status monero-waiting">
+            <p class="monero-payment-status monero-waiting" aria-live="polite">
                 <?= $block->escapeHtml(__('Partial payment received. Please send the remaining amount to the same address.')) ?>
             </p>
         <?php else: ?>
-            <p class="monero-payment-status monero-waiting">
+            <p class="monero-payment-status monero-waiting" aria-live="polite">
                 <?= $block->escapeHtml(__('Send the exact amount to the address below. This page updates while the payment is pending.')) ?>
             </p>
         <?php endif; ?>

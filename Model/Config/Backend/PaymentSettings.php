@@ -46,11 +46,16 @@ class PaymentSettings extends Value
             if (!RpcValidator::isValidPort($rpcPort)) {
                 throw new LocalizedException(__('Wallet-RPC Port must be between 1 and 65535.'));
             }
+            $rpcUsername = trim((string) $this->getSiblingValue('rpc_username'));
+            $rpcPassword = trim((string) $this->getSiblingValue('rpc_password'));
+            if (($rpcUsername === '') !== ($rpcPassword === '')) {
+                throw new LocalizedException(__('Wallet-RPC username and password must be configured together.'));
+            }
             if (!RpcValidator::isLoopbackHost($rpcAddress)) {
                 if ((string) $this->getSiblingValue('rpc_use_https') !== '1') {
                     throw new LocalizedException(__('A remote Wallet-RPC host requires HTTPS.'));
                 }
-                if (trim((string) $this->getSiblingValue('rpc_username')) === '') {
+                if ($rpcUsername === '') {
                     throw new LocalizedException(__('A remote Wallet-RPC host requires a username and password.'));
                 }
             }

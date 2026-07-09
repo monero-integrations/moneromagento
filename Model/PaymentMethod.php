@@ -53,13 +53,33 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         if (!RpcValidator::isValidHost($host) || !RpcValidator::isValidPort($port)) {
             return false;
         }
+        $username = trim((string) $this->getMoneroConfig('rpc_username', $storeId));
+        $password = trim((string) $this->getMoneroConfig('rpc_password', $storeId));
+        if (($username === '') !== ($password === '')) {
+            return false;
+        }
         if (!RpcValidator::isLoopbackHost($host)) {
             if (!$this->getMoneroConfig('rpc_use_https', $storeId)) {
                 return false;
             }
-            $username = trim((string) $this->getMoneroConfig('rpc_username', $storeId));
-            $password = trim((string) $this->getMoneroConfig('rpc_password', $storeId));
             if ($username === '' || $password === '') {
+                return false;
+            }
+        }
+
+        if ($quote) {
+            $manualRate = trim((string) $this->getMoneroConfig('manual_xmr_rate', $storeId));
+            $quoteCurrency = strtoupper((string) $quote->getQuoteCurrencyCode());
+            $manualCurrency = strtoupper(trim((string) $this->getMoneroConfig(
+                'manual_xmr_rate_currency',
+                $storeId
+            )));
+            if (
+                $manualRate !== ''
+                && $quoteCurrency !== ''
+                && $quoteCurrency !== 'XMR'
+                && $manualCurrency !== $quoteCurrency
+            ) {
                 return false;
             }
         }

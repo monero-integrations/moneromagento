@@ -73,7 +73,7 @@ class PaymentSettlementService
     {
         $this->assertPaymentDetails($record);
         $expected = (int) $record->getAmountAtomic();
-        $poolReceived = 0;
+        $detectedReceived = 0;
 
         if ($record->getStatus() !== PaymentRecord::STATUS_PAID) {
             try {
@@ -87,19 +87,12 @@ class PaymentSettlementService
                     'payment_id' => $record->getPaymentId(),
                     'order_id' => $record->getOrderId()
                 ));
-
-                return $this->buildStatus(
-                    $record,
-                    $expected,
-                    (int) $record->getTotalReceivedAtomic(),
-                    $this->getStoredTxids($record),
-                    0
-                );
+                throw $rpcException;
             }
             $this->storeTransfers($record, $verification['transfers']);
 
             $received = (int) $verification['total_received_atomic'];
-            $poolReceived = (int) $verification['pool_received_atomic'];
+            $detectedReceived = (int) $verification['detected_received_atomic'];
             $txids = $verification['txids'];
 
             if ($received >= $expected) {
@@ -114,10 +107,10 @@ class PaymentSettlementService
             $this->applyPaidSync($order, $record, $received, $txids, false);
         }
 
-        return $this->buildStatus($record, $expected, $received, $txids, $poolReceived);
+        return $this->buildStatus($record, $expected, $received, $txids, $detectedReceived);
     }
 
-    private function buildStatus(PaymentRecord $record, $expected, $received, array $txids, $poolReceived = 0)
+    private function buildStatus(PaymentRecord $record, $expected, $received, array $txids, $detectedReceived = 0)
     {
         $paid = $record->getStatus() === PaymentRecord::STATUS_PAID;
         $remaining = max(0, $expected - $received);
@@ -125,7 +118,7 @@ class PaymentSettlementService
             $state = 'overpaid';
         } elseif ($paid) {
             $state = 'paid';
-        } elseif ($poolReceived > 0 && $received + $poolReceived >= $expected) {
+        } elseif ($detectedReceived > 0 && $received + $detectedReceived >= $expected) {
             $state = 'detected';
         } elseif ($received > 0) {
             $state = 'partial';
@@ -138,8 +131,7 @@ class PaymentSettlementService
             'state' => $state,
             'expected_atomic' => $expected,
             'received_atomic' => $received,
-            'pool_received_atomic' => (int) $poolReceived,
-            'mempool_seen' => $state === 'detected',
+            'detected_received_atomic' => (int) $detectedReceived,
             'remaining_atomic' => $remaining,
             'txids' => $txids
         );
@@ -240,6 +232,7 @@ class PaymentSettlementService
             $this->applyPaymentInformation($order, $total, $txids);
 
             $invoice = null;
+            $orderSynced = true;
             if ($this->isTerminalOrder($order)) {
                 $this->flagTerminalPaidOrder($order, $record, $total, $txids);
             } else {
@@ -251,19 +244,23 @@ class PaymentSettlementService
                     if ($registerPayment) {
                         $order->addCommentToStatusHistory('Monero payment received.', false, false);
                     }
-                } else {
+                } elseif ($this->isTemporarilyNonInvoiceableOrder($order)) {
+                    $orderSynced = false;
+                } elseif (!$order->hasInvoices()) {
                     $this->flagNonInvoiceablePaidOrder($order, $record, $total, $txids);
                 }
             }
 
             $transaction = $this->dbTransactionFactory->create();
-            $transaction->addObject($order);
             if ($invoice !== null) {
                 $transaction->addObject($invoice);
             }
+            $transaction->addObject($order);
             $transaction->save();
 
-            $this->markOrderSynced($record);
+            if ($orderSynced) {
+                $this->markOrderSynced($record);
+            }
             $connection->commit();
         } catch (Throwable $exception) {
             $connection->rollBack();
@@ -399,6 +396,14 @@ class PaymentSettlementService
             Order::STATE_CANCELED,
             Order::STATE_CLOSED,
             Order::STATE_COMPLETE
+        ), true);
+    }
+
+    private function isTemporarilyNonInvoiceableOrder(Order $order)
+    {
+        return in_array($order->getState(), array(
+            Order::STATE_HOLDED,
+            Order::STATE_PAYMENT_REVIEW
         ), true);
     }
 

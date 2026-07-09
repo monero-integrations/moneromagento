@@ -130,11 +130,13 @@ class MoneroClient
             $currentHeight = (int) $height['height'];
         }
 
+        $confirmingReceived = 0;
         foreach ($transfers as $transfer) {
             if (!$this->isTransferEligible($transfer)) {
                 continue;
             }
             if ($confirmationsRequired > 0 && !$this->hasConfirmations($transfer, $currentHeight, $confirmationsRequired)) {
+                $confirmingReceived += $transfer['amount'];
                 continue;
             }
 
@@ -143,13 +145,12 @@ class MoneroClient
             $eligibleTransfers[] = $transfer;
         }
 
-        $poolReceived = $this->sumDetectedPoolTransfers($transfers);
+        $detectedReceived = $this->sumDetectedPoolTransfers($transfers) + $confirmingReceived;
         $paid = $totalReceived >= $amountAtomic;
         return array(
             'paid' => $paid,
             'total_received_atomic' => $totalReceived,
-            'pool_received_atomic' => $poolReceived,
-            'mempool_seen' => !$paid && $totalReceived + $poolReceived >= $amountAtomic,
+            'detected_received_atomic' => $detectedReceived,
             'txids' => $txids,
             'transfers' => $eligibleTransfers
         );
@@ -303,6 +304,7 @@ class MoneroClient
         return $transfer['in_pool']
             && $transfer['amount'] > 0
             && $transfer['txid'] !== ''
+            && $transfer['unlock_time'] === 0
             && $transfer['double_spend_seen'] === false;
     }
 

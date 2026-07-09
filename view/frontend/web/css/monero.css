@@ -8,6 +8,10 @@
     margin: 24px 0;
 }
 
+.monero-payment[data-monero-state='detected'] .monero-payment-qr {
+    display: none;
+}
+
 .monero-payment-qr svg {
     display: block;
     width: 100%;
