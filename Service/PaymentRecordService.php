@@ -145,10 +145,6 @@ class PaymentRecordService
         $record->setIncrementId((string) $order->getIncrementId());
         $record->setOrderCurrency((string) $order->getOrderCurrencyCode());
         $record->setConfirmationsRequired($this->getConfiguredConfirmations((int) $order->getStoreId()));
-        $record->setExpiresAt(gmdate(
-            'Y-m-d H:i:s',
-            time() + ($this->getConfiguredPaymentWindow((int) $order->getStoreId()) * 60)
-        ));
         $record->setStatus(PaymentRecord::STATUS_PENDING);
         $record->setAmountAtomic(0);
         $record->setTotalReceivedAtomic(0);
@@ -168,6 +164,10 @@ class PaymentRecordService
         if ($record->getSubaddress() === '') {
             $record->setSubaddress($monero->createSubaddress('Magento order ' . $order->getIncrementId()));
         }
+        $record->setExpiresAt(gmdate(
+            'Y-m-d H:i:s',
+            time() + ($this->getConfiguredPaymentWindow((int) $order->getStoreId()) * 60)
+        ));
     }
 
     private function getConfiguredConfirmations($storeId)
