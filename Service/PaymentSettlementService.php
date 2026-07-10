@@ -235,8 +235,13 @@ class PaymentSettlementService
             $orderSynced = true;
             if ($this->isTerminalOrder($order)) {
                 $this->flagTerminalPaidOrder($order, $record, $total, $txids);
+            } elseif ($this->isTemporarilyNonInvoiceableOrder($order)) {
+                $orderSynced = false;
             } else {
                 $invoice = $this->prepareInvoice($order);
+                if ($invoice === null) {
+                    $invoice = $this->prepareExistingInvoicePayment($order);
+                }
                 if ($invoice !== null) {
                     $order->setState(Order::STATE_PROCESSING);
                     $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING));
@@ -244,9 +249,11 @@ class PaymentSettlementService
                     if ($registerPayment) {
                         $order->addCommentToStatusHistory('Monero payment received.', false, false);
                     }
-                } elseif ($this->isTemporarilyNonInvoiceableOrder($order)) {
-                    $orderSynced = false;
-                } elseif (!$order->hasInvoices()) {
+                } elseif ($order->hasInvoices()) {
+                    if (!$this->hasPaidFullInvoice($order)) {
+                        $this->flagNonInvoiceablePaidOrder($order, $record, $total, $txids);
+                    }
+                } else {
                     $this->flagNonInvoiceablePaidOrder($order, $record, $total, $txids);
                 }
             }
@@ -298,6 +305,37 @@ class PaymentSettlementService
         $invoice->register();
 
         return $invoice;
+    }
+
+    private function prepareExistingInvoicePayment(Order $order)
+    {
+        foreach ($order->getInvoiceCollection() as $invoice) {
+            if ((int) $invoice->getState() !== Invoice::STATE_OPEN || !$this->isFullInvoice($order, $invoice)) {
+                continue;
+            }
+
+            $invoice->pay();
+            return $invoice;
+        }
+
+        return null;
+    }
+
+    private function hasPaidFullInvoice(Order $order)
+    {
+        foreach ($order->getInvoiceCollection() as $invoice) {
+            if ((int) $invoice->getState() === Invoice::STATE_PAID && $this->isFullInvoice($order, $invoice)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isFullInvoice(Order $order, Invoice $invoice)
+    {
+        return (float) $invoice->getGrandTotal() >= (float) $order->getGrandTotal()
+            && (float) $invoice->getBaseGrandTotal() >= (float) $order->getBaseGrandTotal();
     }
 
     private function markRecordPaid(PaymentRecord $record, $total)
