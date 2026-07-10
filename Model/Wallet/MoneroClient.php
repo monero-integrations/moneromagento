@@ -28,6 +28,7 @@ class MoneroClient
     )
     {
         $scheme = $useHttps ? 'https' : 'http';
+        $rpcAddress = RpcValidator::bracketHost($rpcAddress);
         $this->rpc = new JsonRpcClient($scheme . '://' . $rpcAddress . ':' . $rpcPort . '/json_rpc');
         $this->priceApiKey = trim((string) $priceApiKey);
         $this->manualPriceRate = null;

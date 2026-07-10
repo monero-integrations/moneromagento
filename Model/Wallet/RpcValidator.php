@@ -43,6 +43,16 @@ class RpcValidator
         return ctype_digit($port) && (int) $port >= 1 && (int) $port <= 65535;
     }
 
+    public static function bracketHost($host)
+    {
+        $host = (string) $host;
+        if (filter_var(self::unbracket($host), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
+            return '[' . self::unbracket($host) . ']';
+        }
+
+        return $host;
+    }
+
     private static function unbracket($host)
     {
         if (strlen($host) >= 2 && $host[0] === '[' && substr($host, -1) === ']') {
