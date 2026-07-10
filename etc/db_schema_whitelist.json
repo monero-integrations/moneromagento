@@ -14,6 +14,7 @@
             "total_received_atomic": true,
             "order_synced": true,
             "paid_at": true,
+            "expires_at": true,
             "created_at": true,
             "updated_at": true
         },

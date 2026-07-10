@@ -15,6 +15,7 @@
         <column xsi:type="bigint" name="total_received_atomic" unsigned="true" nullable="false" default="0" comment="Total Received Atomic"/>
         <column xsi:type="boolean" name="order_synced" nullable="false" default="0" comment="Order Synced"/>
         <column xsi:type="timestamp" name="paid_at" nullable="true" comment="Paid At"/>
+        <column xsi:type="timestamp" name="expires_at" nullable="true" comment="Expires At"/>
         <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created At"/>
         <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated At"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

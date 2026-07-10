@@ -75,7 +75,10 @@ class PaymentSettlementService
         $expected = (int) $record->getAmountAtomic();
         $detectedReceived = 0;
 
-        if ($record->getStatus() !== PaymentRecord::STATUS_PAID) {
+        if ($record->getStatus() === PaymentRecord::STATUS_EXPIRED) {
+            $received = (int) $record->getTotalReceivedAtomic();
+            $txids = $this->getStoredTxids($record);
+        } elseif ($record->getStatus() !== PaymentRecord::STATUS_PAID) {
             try {
                 $verification = $monero->verifyPayment(
                     $record->getSubaddress(),
@@ -95,7 +98,9 @@ class PaymentSettlementService
             $detectedReceived = (int) $verification['detected_received_atomic'];
             $txids = $verification['txids'];
 
-            if ($received >= $expected) {
+            if ($this->isExpired($record)) {
+                $this->markExpired($order, $record, $received, $detectedReceived, $txids);
+            } elseif ($received >= $expected) {
                 $this->markPaid($order, $record, $received, $txids);
             } else {
                 $record->setTotalReceivedAtomic($received);
@@ -114,7 +119,9 @@ class PaymentSettlementService
     {
         $paid = $record->getStatus() === PaymentRecord::STATUS_PAID;
         $remaining = max(0, $expected - $received);
-        if ($paid && $received > $expected) {
+        if ($record->getStatus() === PaymentRecord::STATUS_EXPIRED) {
+            $state = 'expired';
+        } elseif ($paid && $received > $expected) {
             $state = 'overpaid';
         } elseif ($paid) {
             $state = 'paid';
@@ -135,6 +142,42 @@ class PaymentSettlementService
             'remaining_atomic' => $remaining,
             'txids' => $txids
         );
+    }
+
+    private function isExpired($record)
+    {
+        $expiresAt = $record->getExpiresAt();
+
+        return $expiresAt !== null && $expiresAt !== '' && time() > strtotime($expiresAt . ' UTC');
+    }
+
+    private function markExpired($order, $record, $received, $detectedReceived, $txids)
+    {
+        $fundsReceived = $received > 0 || $detectedReceived > 0;
+        $record->setStatus(PaymentRecord::STATUS_EXPIRED);
+        $record->setTotalReceivedAtomic($received);
+        $order->addCommentToStatusHistory(
+            $fundsReceived
+                ? 'Monero payment received after the payment window expired. Manual review required.'
+                : 'Monero payment window expired.',
+            false,
+            false
+        );
+
+        $transaction = $this->dbTransactionFactory->create();
+        $transaction->addObject($record);
+        $transaction->addObject($order);
+        $transaction->save();
+
+        if ($fundsReceived) {
+            $this->logger->warning('Monero payment received after the payment window expired.', array(
+                'payment_id' => $record->getPaymentId(),
+                'order_id' => $record->getOrderId(),
+                'total_received_atomic' => (int) $received,
+                'detected_received_atomic' => (int) $detectedReceived,
+                'txids' => $txids
+            ));
+        }
     }
 
     private function storeTransfers(PaymentRecord $record, array $transfers)

@@ -46,18 +46,24 @@
                         <validate>validate-digits validate-zero-or-greater</validate>
                         <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
                     </field>
-                    <field id="price_api_key" translate="label comment" type="obscure" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="payment_window_minutes" translate="label comment" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Payment Window (minutes)</label>
+                        <comment>Orders stop being payable after this window. Payments received later require manual review.</comment>
+                        <validate>validate-digits validate-greater-than-zero</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="price_api_key" translate="label comment" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>CryptoCompare API Key</label>
                         <comment>Optional. Used for fiat to XMR conversion when no manual XMR rate is configured.</comment>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     </field>
-                    <field id="manual_xmr_rate" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="manual_xmr_rate" translate="label comment" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Manual XMR Rate</label>
                         <comment>Optional price of 1 XMR in the manual rate currency. Useful for local tests; leave blank for live rate lookup.</comment>
                         <validate>validate-number validate-greater-than-zero</validate>
                         <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
                     </field>
-                    <field id="manual_xmr_rate_currency" translate="label comment" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="manual_xmr_rate_currency" translate="label comment" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Manual XMR Rate Currency</label>
                         <comment>Three-letter currency code for the manual rate, such as USD. Required when Manual XMR Rate is set.</comment>
                         <validate>validate-alpha</validate>

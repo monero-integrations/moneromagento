@@ -11,6 +11,7 @@ class PaymentRecord extends AbstractModel
 {
     const STATUS_PENDING = 'pending';
     const STATUS_PAID = 'paid';
+    const STATUS_EXPIRED = 'expired';
 
     protected function _construct()
     {
@@ -135,6 +136,16 @@ class PaymentRecord extends AbstractModel
     public function setPaidAt($paidAt)
     {
         return $this->setData('paid_at', $paidAt);
+    }
+
+    public function getExpiresAt()
+    {
+        return $this->getData('expires_at');
+    }
+
+    public function setExpiresAt($expiresAt)
+    {
+        return $this->setData('expires_at', $expiresAt);
     }
 
     public function hasPaymentDetails()

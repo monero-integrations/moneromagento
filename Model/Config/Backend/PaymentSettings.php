@@ -36,6 +36,14 @@ class PaymentSettings extends Value
             );
         }
 
+        $paymentWindow = trim((string) $this->getSiblingValue('payment_window_minutes'));
+        if ($paymentWindow !== '' && (!ctype_digit($paymentWindow) || (int) $paymentWindow < 1
+            || (int) $paymentWindow > PaymentRecordService::MAX_PAYMENT_WINDOW_MINUTES)) {
+            throw new LocalizedException(
+                __('Payment Window must be an integer between 1 and %1 minutes.', PaymentRecordService::MAX_PAYMENT_WINDOW_MINUTES)
+            );
+        }
+
         if ((string) $this->getSiblingValue('active') === '1') {
             $rpcAddress = trim((string) $this->getSiblingValue('rpc_address'));
             $rpcPort = trim((string) $this->getSiblingValue('rpc_port'));

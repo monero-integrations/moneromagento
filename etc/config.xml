@@ -10,6 +10,7 @@
                 <order_status>pending_payment</order_status>
                 <rpc_use_https>0</rpc_use_https>
                 <num_confirmations>5</num_confirmations>
+                <payment_window_minutes>60</payment_window_minutes>
                 <price_api_key></price_api_key>
                 <manual_xmr_rate></manual_xmr_rate>
                 <manual_xmr_rate_currency></manual_xmr_rate_currency>

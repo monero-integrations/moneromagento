@@ -21,6 +21,7 @@ use Throwable;
 class PaymentRecordService
 {
     const MAX_CONFIRMATIONS = 1000;
+    const MAX_PAYMENT_WINDOW_MINUTES = 10080;
 
     private $helper;
     private $recordFactory;
@@ -144,6 +145,10 @@ class PaymentRecordService
         $record->setIncrementId((string) $order->getIncrementId());
         $record->setOrderCurrency((string) $order->getOrderCurrencyCode());
         $record->setConfirmationsRequired($this->getConfiguredConfirmations((int) $order->getStoreId()));
+        $record->setExpiresAt(gmdate(
+            'Y-m-d H:i:s',
+            time() + ($this->getConfiguredPaymentWindow((int) $order->getStoreId()) * 60)
+        ));
         $record->setStatus(PaymentRecord::STATUS_PENDING);
         $record->setAmountAtomic(0);
         $record->setTotalReceivedAtomic(0);
@@ -185,6 +190,21 @@ class PaymentRecordService
         }
 
         return $confirmations;
+    }
+
+    private function getConfiguredPaymentWindow($storeId)
+    {
+        $value = trim((string) $this->helper->getConfig('payment/custompayment/payment_window_minutes', $storeId));
+        if ($value === '') {
+            return 60;
+        }
+        if (!ctype_digit($value) || (int) $value < 1 || (int) $value > self::MAX_PAYMENT_WINDOW_MINUTES) {
+            throw new LocalizedException(
+                __('The configured Monero payment window must be between 1 and %1 minutes.', self::MAX_PAYMENT_WINDOW_MINUTES)
+            );
+        }
+
+        return (int) $value;
     }
 
     private function canonicalGrandTotal(Order $order)
