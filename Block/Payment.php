@@ -34,6 +34,11 @@ class Payment extends Template
         return (string) $this->getData('received_xmr');
     }
 
+    public function getDetectedXmr()
+    {
+        return (string) $this->getData('detected_xmr');
+    }
+
     public function getRemainingXmr()
     {
         return (string) $this->getData('remaining_xmr');
@@ -62,6 +67,11 @@ class Payment extends Template
     public function isDetected()
     {
         return $this->getState() === 'detected';
+    }
+
+    public function isExpired()
+    {
+        return $this->getState() === 'expired';
     }
 
     public function getMoneroUri()

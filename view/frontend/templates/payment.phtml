@@ -14,11 +14,16 @@
          data-monero-qr
          data-monero-uri="<?= $block->escapeHtmlAttr($block->getMoneroUri()) ?>"
          data-monero-state="<?= $block->escapeHtmlAttr($block->getState()) ?>"
+         data-monero-detected-xmr="<?= $block->escapeHtmlAttr($block->getDetectedXmr()) ?>"
          data-monero-status-url="<?= $block->escapeUrl($block->getStatusUrl()) ?>"
          data-monero-success-url="<?= $block->escapeUrl($block->getSuccessUrl()) ?>">
         <h1><?= $block->escapeHtml(__('Monero Payment')) ?></h1>
 
-        <?php if ($block->isPaid()): ?>
+        <?php if ($block->isExpired()): ?>
+            <p class="monero-payment-status monero-waiting" aria-live="polite">
+                <?= $block->escapeHtml(__('This payment window has expired. Please contact the store owner if you already sent funds.')) ?>
+            </p>
+        <?php elseif ($block->isPaid()): ?>
             <p class="monero-payment-status monero-paid" aria-live="polite">
                 <?= $block->escapeHtml(__('Payment received. Thank you! Returning you to the order confirmation page.')) ?>
             </p>
@@ -36,8 +41,12 @@
             </p>
         <?php endif; ?>
 
-        <?php if (!$block->isPaid()): ?>
+        <?php if (!$block->isPaid() && !$block->isExpired()): ?>
             <div class="monero-payment-qr" aria-hidden="true"></div>
+            <p class="monero-payment-detected-warning<?= (float) $block->getDetectedXmr() > 0 ? '' : ' monero-hidden' ?>"
+               data-monero-detected-warning>
+                <?= $block->escapeHtml(__('A transaction is awaiting confirmation. Do not resend payment while it is confirming.')) ?>
+            </p>
         <?php endif; ?>
 
         <dl class="monero-payment-details">
@@ -61,6 +70,14 @@
             <dd class="monero-payment-partial-detail<?= $block->isPartial() ? '' : ' monero-hidden' ?>"
                 data-monero-remaining>
                 <?= $block->escapeHtml($block->getRemainingXmr()) ?> XMR
+            </dd>
+
+            <dt class="monero-payment-detected-detail<?= (float) $block->getDetectedXmr() > 0 ? '' : ' monero-hidden' ?>">
+                <?= $block->escapeHtml(__('Detected (awaiting confirmation)')) ?>
+            </dt>
+            <dd class="monero-payment-detected-detail<?= (float) $block->getDetectedXmr() > 0 ? '' : ' monero-hidden' ?>"
+                data-monero-detected>
+                <?= $block->escapeHtml($block->getDetectedXmr()) ?> XMR
             </dd>
 
             <dt><?= $block->escapeHtml(__('Address')) ?></dt>

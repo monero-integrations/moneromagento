@@ -4,18 +4,26 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
     return function (config, element) {
         var uri = element.getAttribute('data-monero-uri');
         var state = element.getAttribute('data-monero-state');
+        var initialDetectedAmount = element.getAttribute('data-monero-detected-xmr');
         var statusUrl = element.getAttribute('data-monero-status-url');
         var successUrl = element.getAttribute('data-monero-success-url');
         var target = element.querySelector('.monero-payment-qr');
         var statusMessage = element.querySelector('.monero-payment-status');
         var receivedAmount = element.querySelector('[data-monero-received]');
+        var detectedAmount = element.querySelector('[data-monero-detected]');
+        var detectedWarning = element.querySelector('[data-monero-detected-warning]');
         var remainingAmount = element.querySelector('[data-monero-remaining]');
         var pollTimer = null;
         var redirectTimer = null;
         var requestInFlight = false;
+        var detectedIsPresent = false;
 
         function renderQr(nextUri) {
             if (!nextUri || !target || typeof qrcode !== 'function') {
+                return;
+            }
+            if (detectedIsPresent) {
+                target.style.display = 'none';
                 return;
             }
             target.style.display = '';
@@ -42,13 +50,23 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
         function setStatus(nextState) {
             state = nextState || state;
             element.setAttribute('data-monero-state', state);
-            if (target && state !== 'paid' && state !== 'overpaid' && state !== 'detected') {
-                target.style.display = '';
+            if (target && state !== 'paid' && state !== 'overpaid' && state !== 'detected' && state !== 'expired' &&
+                (target.style.display === 'none' || target.innerHTML === '')) {
+                renderQr(uri);
             }
             if (!statusMessage) {
                 return;
             }
-            if (state === 'paid' || state === 'overpaid') {
+            if (state === 'expired') {
+                statusMessage.className = 'monero-payment-status monero-waiting';
+                statusMessage.textContent = $t('This payment window has expired. Please contact the store owner if you already sent funds.');
+                uri = '';
+                element.setAttribute('data-monero-uri', '');
+                if (target) {
+                    target.style.display = 'none';
+                    target.innerHTML = '';
+                }
+            } else if (state === 'paid' || state === 'overpaid') {
                 statusMessage.className = 'monero-payment-status monero-paid';
                 statusMessage.textContent = $t('Payment received. Thank you! Returning you to the order confirmation page.');
                 if (target) {
@@ -85,6 +103,33 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
             }
             if (remainingAmount && typeof data.remaining_xmr !== 'undefined') {
                 remainingAmount.textContent = data.remaining_xmr + ' XMR';
+            }
+        }
+
+        function setDetectedDetails(data) {
+            var details = element.querySelectorAll('.monero-payment-detected-detail');
+            var showDetails = parseFloat(data.detected_xmr) > 0;
+            detectedIsPresent = showDetails;
+
+            for (var index = 0; index < details.length; index++) {
+                if (showDetails) {
+                    details[index].className = details[index].className.replace(/\s*monero-hidden/g, '');
+                } else if (details[index].className.indexOf('monero-hidden') === -1) {
+                    details[index].className += ' monero-hidden';
+                }
+            }
+            if (detectedAmount && typeof data.detected_xmr !== 'undefined') {
+                detectedAmount.textContent = data.detected_xmr + ' XMR';
+            }
+            if (detectedWarning) {
+                detectedWarning.className = showDetails
+                    ? 'monero-payment-detected-warning'
+                    : 'monero-payment-detected-warning monero-hidden';
+            }
+            if (target && showDetails) {
+                target.style.display = 'none';
+            } else if (target && state !== 'paid' && state !== 'overpaid' && state !== 'detected' && state !== 'expired') {
+                renderQr(uri);
             }
         }
 
@@ -152,6 +197,7 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
             }
             setStatus(data.state);
             setPartialDetails(data);
+            setDetectedDetails(data);
             if (data.success_url) {
                 successUrl = data.success_url;
             }
@@ -162,6 +208,9 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
             }
             if (data.paid || data.state === 'paid' || data.state === 'overpaid') {
                 redirectWhenPaid(successUrl);
+                return;
+            }
+            if (data.state === 'expired') {
                 return;
             }
             schedulePoll();
@@ -186,10 +235,13 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
             });
         }
 
-        renderQr(uri);
         setStatus(state);
+        setDetectedDetails({ detected_xmr: initialDetectedAmount });
+        renderQr(uri);
         if (state === 'paid' || state === 'overpaid') {
             redirectWhenPaid(successUrl);
+        } else if (state === 'expired') {
+            return;
         } else {
             schedulePoll();
         }
@@ -203,7 +255,7 @@ define(['qrcodeGenerator', 'jquery', 'mage/translate'], function (qrcode, $, $t)
             }
         });
         document.addEventListener('visibilitychange', function () {
-            if (!document.hidden && state !== 'paid' && state !== 'overpaid') {
+            if (!document.hidden && state !== 'paid' && state !== 'overpaid' && state !== 'expired') {
                 schedulePoll();
             }
         });

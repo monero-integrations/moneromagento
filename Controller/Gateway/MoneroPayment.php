@@ -137,10 +137,11 @@ class MoneroPayment extends Action implements HttpGetActionInterface
             'subaddress' => $record->getSubaddress(),
             'amount_xmr' => $record->getAmountXmr(),
             'received_xmr' => $monero->atomicUnitsToXmr($status['received_atomic']),
+            'detected_xmr' => $monero->atomicUnitsToXmr($status['detected_received_atomic']),
             'remaining_xmr' => $monero->atomicUnitsToXmr($status['remaining_atomic']),
             'confirmations_required' => $record->getConfirmationsRequired(),
             'state' => $status['state'],
-            'monero_uri' => (empty($status['paid']) && $status['state'] !== 'detected')
+            'monero_uri' => (empty($status['paid']) && !in_array($status['state'], array('detected', 'expired'), true))
                 ? $monero->buildPaymentUri(
                     $record->getSubaddress(),
                     $status['remaining_atomic'],

@@ -98,8 +98,9 @@ class Status extends Action implements HttpGetActionInterface
             'paid' => !empty($status['paid']),
             'state' => $status['state'],
             'received_xmr' => $monero->atomicUnitsToXmr($status['received_atomic']),
+            'detected_xmr' => $monero->atomicUnitsToXmr($status['detected_received_atomic']),
             'remaining_xmr' => $monero->atomicUnitsToXmr($status['remaining_atomic']),
-            'monero_uri' => (empty($status['paid']) && $status['state'] !== 'detected')
+            'monero_uri' => (empty($status['paid']) && !in_array($status['state'], array('detected', 'expired'), true))
                 ? $monero->buildPaymentUri(
                     $record->getSubaddress(),
                     $status['remaining_atomic'],
