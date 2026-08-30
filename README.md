@@ -7,7 +7,7 @@ Monero Payment Gateway for Magento 2
 - MySQL-compatible database supported by the Magento installation
 - A Monero wallet and `monero-wallet-rpc` from [getmonero.org](https://getmonero.org/downloads/) or the [Monero Project GitHub repo](https://github.com/monero-project/monero)
 
-Tested with Magento Open Source 2.4.9 and Mage-OS 3.0.0. The payment page is order-specific and must not be served from full-page cache.
+Tested with Magento Open Source 2.4.9 and Mage-OS 3.0.0. The order-specific payment route is intentionally uncacheable and sends no-store headers because it contains customer-specific payment data.
 
 ## Install Instructions
 ### Install with composer
@@ -40,6 +40,7 @@ Installing with composer is the easiest way to install this plugin.
 - Plain unauthenticated wallet-rpc is allowed only for localhost or an SSH tunnel. Remote wallet-rpc hosts must use both HTTPS and RPC login.
 - "Number of confirmations" - Number of confirmations the transaction must receive before the order is marked as paid. Use `0` to accept the first mined transaction; pool transactions are not final. (Default: 5)
 - For fiat stores, configure a CryptoCompare API key or set a manual XMR rate plus its three-letter currency. The manual rate is the price of 1 XMR in that currency and is intended for local tests or controlled deployments where the store operator manages pricing. The unauthenticated CryptoCompare endpoint is rate-limited, so production fiat stores should set an API key.
+- For orders denominated in XMR, the order total is used directly and no exchange-rate lookup is performed. Configuring Magento itself to use XMR as a store currency is outside this module's scope.
 - The wallet-rpc network must match the addresses your customers expect: connect a mainnet wallet for a live store, or stagenet/testnet only for testing. The module reads incoming payments from wallet account `0`.
-- The method stays hidden at checkout until the wallet-rpc host and port are configured.
-- The bundled QR renderer is Kazuhiko Arase's MIT-licensed QR Code Generator for JavaScript.
+- When the method is enabled, incomplete or unsafe wallet-RPC settings are rejected with an admin save error. Checkout also hides the method if inherited or imported configuration is invalid. This validation does not test live wallet-RPC connectivity.
+- The bundled QR renderer is [QR Code Generator for JavaScript 2.0.4](https://github.com/kazuhikoarase/qrcode-generator/tree/js2.0.4), Copyright (c) 2009 Kazuhiko Arase, distributed under the MIT license. The upstream license notice is included with the bundled file.

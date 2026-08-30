@@ -12,7 +12,7 @@ use MoneroIntegrations\Custompayment\Model\PaymentRecord;
 class CheckoutPaymentSession
 {
     const SESSION_KEY = 'monero_payment_ids';
-    const MAX_AGE_SECONDS = 604800;
+    const MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
     const MAX_REMEMBERED = 20;
 
     private $checkoutSession;

@@ -6,6 +6,7 @@
                     <label>Monero Payment</label>
                     <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Enable</label>
+                        <comment>When enabled, wallet-RPC host, port, authentication, and HTTPS requirements are validated when this configuration is saved. This does not test live RPC connectivity.</comment>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
                     </field>
@@ -54,18 +55,18 @@
                     </field>
                     <field id="price_api_key" translate="label comment" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>CryptoCompare API Key</label>
-                        <comment>Optional. Used for fiat to XMR conversion when no manual XMR rate is configured.</comment>
+                        <comment>Optional. Used only for non-XMR orders when no manual XMR rate is configured.</comment>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     </field>
                     <field id="manual_xmr_rate" translate="label comment" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Manual XMR Rate</label>
-                        <comment>Optional price of 1 XMR in the manual rate currency. Useful for local tests; leave blank for live rate lookup.</comment>
+                        <comment>Optional price of 1 XMR in the manual rate currency. Used only for non-XMR orders; leave blank for live rate lookup.</comment>
                         <validate>validate-number validate-greater-than-zero</validate>
                         <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
                     </field>
                     <field id="manual_xmr_rate_currency" translate="label comment" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Manual XMR Rate Currency</label>
-                        <comment>Three-letter currency code for the manual rate, such as USD. Required when Manual XMR Rate is set.</comment>
+                        <comment>Three-letter order currency code for the manual rate, such as USD. Required when Manual XMR Rate is set; ignored for XMR orders.</comment>
                         <validate>validate-alpha</validate>
                     </field>
                 </group>

@@ -92,10 +92,21 @@ class PaymentSettlementService
                 ));
                 throw $rpcException;
             }
+            if (
+                !is_array($verification)
+                || !array_key_exists('total_received_atomic', $verification)
+                || !array_key_exists('detected_received_atomic', $verification)
+                || !is_int($verification['total_received_atomic'])
+                || !is_int($verification['detected_received_atomic'])
+                || $verification['total_received_atomic'] < 0
+                || $verification['detected_received_atomic'] < 0
+            ) {
+                throw new RuntimeException('Wallet verification returned invalid received amounts.');
+            }
             $this->storeTransfers($record, $verification['transfers']);
 
-            $received = (int) $verification['total_received_atomic'];
-            $detectedReceived = (int) $verification['detected_received_atomic'];
+            $received = $verification['total_received_atomic'];
+            $detectedReceived = $verification['detected_received_atomic'];
             $txids = $verification['txids'];
 
             if ($this->isExpired($record)) {

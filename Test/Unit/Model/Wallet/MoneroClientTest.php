@@ -16,6 +16,16 @@ class MoneroClientTest extends TestCase
         $this->assertSame(333333333334, $client->fiatToAtomicUnits('1', 'USD'));
     }
 
+    public function testXmrAmountUsesOneToOneRate()
+    {
+        $client = new MoneroClient('localhost', 18082);
+
+        $this->assertSame(
+            1250000000000,
+            $client->fiatToAtomicUnits('1.25', 'XMR')
+        );
+    }
+
     public function testSubPiconeroAmountIsRejected()
     {
         $client = new MoneroClient('localhost', 18082, '', '', '', '1000000000001', 'USD');
