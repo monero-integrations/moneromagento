@@ -2,17 +2,72 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment">
-                <group id="custompayment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <group id="custompayment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Monero Payment</label>
                     <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Enable</label>
+                        <comment>When enabled, wallet-RPC host, port, authentication, and HTTPS requirements are validated when this configuration is saved. This does not test live RPC connectivity.</comment>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
                     </field>
-                    <field id="rpc_address" translate="xmr_address" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Wallet-RPC Address</label>
+                    <field id="title" translate="label comment" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Title</label>
+                        <comment>Shown to customers at checkout and in order payment information.</comment>
+                        <validate>required-entry validate-no-html-tags</validate>
                     </field>
-                    <field id="rpc_port" translate="rpc_port" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="rpc_address" translate="label comment" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-RPC Host</label>
+                        <comment>Host or IP only, without protocol, port, or path. Use 127.0.0.1 when wallet-rpc is local or reached through an SSH tunnel.</comment>
+                        <validate>validate-no-html-tags</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="rpc_port" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Wallet-RPC Port</label>
+                        <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="rpc_username" translate="label comment" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-RPC Username</label>
+                        <comment>Leave blank only when monero-wallet-rpc is started with --disable-rpc-login.</comment>
+                    </field>
+                    <field id="rpc_password" translate="label comment" type="obscure" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Wallet-RPC Password</label>
+                        <comment>Used with monero-wallet-rpc --rpc-login.</comment>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                    <field id="rpc_use_https" translate="label comment" sortOrder="7" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Use HTTPS for Wallet-RPC</label>
+                        <comment>Required for non-local wallet-rpc hosts. Leave No for localhost or SSH-tunneled RPC.</comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="num_confirmations" translate="label comment" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Number of Confirmations</label>
+                        <comment>Number of blockchain confirmations required before considering the payment successful. Use `0` to accept the first mined transaction; pool transactions are not final.</comment>
+                        <validate>validate-digits validate-zero-or-greater</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="payment_window_minutes" translate="label comment" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Payment Window (minutes)</label>
+                        <comment>Orders stop being payable after this window. Payments received later require manual review.</comment>
+                        <validate>validate-digits validate-greater-than-zero</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="price_api_key" translate="label comment" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>CryptoCompare API Key</label>
+                        <comment>Optional. Used only for non-XMR orders when no manual XMR rate is configured.</comment>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                    <field id="manual_xmr_rate" translate="label comment" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Manual XMR Rate</label>
+                        <comment>Optional price of 1 XMR in the manual rate currency. Used only for non-XMR orders; leave blank for live rate lookup.</comment>
+                        <validate>validate-number validate-greater-than-zero</validate>
+                        <backend_model>MoneroIntegrations\Custompayment\Model\Config\Backend\PaymentSettings</backend_model>
+                    </field>
+                    <field id="manual_xmr_rate_currency" translate="label comment" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Manual XMR Rate Currency</label>
+                        <comment>Three-letter order currency code for the manual rate, such as USD. Required when Manual XMR Rate is set; ignored for XMR orders.</comment>
+                        <validate>validate-alpha</validate>
                     </field>
                 </group>
         </section>
